@@ -12,7 +12,7 @@
     >
       <table-column prop="name" label="名字"></table-column>
       <table-column prop="nickName" label="小名"></table-column>
-      <table-column prop="age" label="年龄" data-type="numeric"></table-column>
+      <table-column prop="age" label="年龄" data-type="numeric" sortable></table-column>
       <table-column prop="birthday" label="生日"></table-column>
       <table-column label="操作" :sortable="false" :filterable="false">
         <template slot-scope="row">
