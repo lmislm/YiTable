@@ -133,13 +133,43 @@ export default {
       return Array.isArray(this.data)
     },
     displayedRows () {
-      let rows = this.rows
-      if (this.usesLocalData && this.pagination) {
-        const lastPage = this.pagination.currentPage - 1
-        const lastElementOfLastPageIndex = lastPage * this.pagination.perPage
-        rows = rows.slice(lastElementOfLastPageIndex, lastElementOfLastPageIndex + this.pagination.perPage)
+      // let rows = this.rows // 前端分页，TODO: 加attr来判断
+      // if (this.usesLocalData && this.pagination) {
+      //   const lastPage = this.pagination.currentPage - 1
+      //   const lastElementOfLastPageIndex = lastPage * this.pagination.perPage
+      //   rows = rows.slice(lastElementOfLastPageIndex, lastElementOfLastPageIndex + this.pagination.perPage)
+      // }
+      // return rows
+      if (!this.usesLocalData) {
+        return this.sortedRows
       }
-      return rows
+      if (!this.showFilter) {
+        return this.sortedRows
+      }
+      if (!this.columns.filter(column => column.isFilterable()).length) {
+        return this.sortedRows
+      }
+      return this.sortedRows.filter(row => row.passesFilter(this.filter))
+    },
+    sortedRows () {
+      if (!this.usesLocalData) {
+        return this.rows
+      }
+      if (this.sort.fieldName === '') {
+        return this.rows
+      }
+      if (this.columns.length === 0) {
+        return this.rows
+      }
+      const sortColumn = this.getColumn(this.sort.fieldName)
+      if (!sortColumn) {
+        return this.rows
+      }
+      // 深拷贝，JSON.parse方法会有函数循环限制
+      // slice makes a copy of the array, instead of mutating the orginal
+      const rowsCopy = this.rows.slice(0)
+      const sorted = rowsCopy.sort(sortColumn.getSortPredicate(this.sort.order, this.columns))
+      return sorted
     }
   },
   watch: {
