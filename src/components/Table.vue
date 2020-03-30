@@ -30,13 +30,10 @@
         <slot name="footer" />
       </table>
     </div>
-
     <div v-if="displayedRows.length === 0" class="yi-table__message">{{ filterNoResults }}</div>
-
     <div style="display:none;">
       <slot />
     </div>
-
     <template v-if="pagination && count">
       <slot name="pagination" :pagination="{ count, pageChange, paginationEllipsisClick }">
         <table-pagination
@@ -161,17 +158,14 @@ export default {
       }
     }
   },
-
   created () {
     this.sort.fieldName = this.sortBy
     this.sort.order = this.sortOrder
   },
-
   async mounted () {
     const columnComponents = this.$slots.default
       .filter((column) => column.componentInstance)
       .map((column) => column)
-
     this.columns = columnComponents.map((column) => new Column(column))
     columnComponents.forEach((columnCom) => {
       if (columnCom.componentInstance.$options.props) {
@@ -182,43 +176,31 @@ export default {
         })
       }
     })
-
     await this.mapDataToRows()
   },
-
   methods: {
     cloneArray (arrayToCopy) {
       return arrayToCopy.slice(0)
     },
-
     async pageChange (page) {
       this.pagination.currentPage = page
-
       await this.mapDataToRows()
     },
-
     async mapDataToRows () {
       const data = this.usesLocalData ? this.prepareLocalData() : await this.fetchServerData()
-
       this.rows = data
         .map((rowData, rowIndex) => new Row(rowData, this.columns, rowIndex))
-
       this.$emit('data-change')
     },
-
     paginationEllipsisClick (event) {
       this.$emit('paginationEllipsisClick', event)
     },
-
     prepareLocalData () {
       this.count = this.data.length
-
       return this.data
     },
-
     async fetchServerData () {
       const page = (this.pagination && this.pagination.currentPage) || 1
-
       const response = await this.data({
         sort: this.sort,
         page: page
@@ -228,31 +210,26 @@ export default {
 
       return response.data
     },
-
     async refresh () {
       await this.mapDataToRows()
     },
-
     changeSorting (column) {
+      console.log(column, 'changeSort')
       if (this.sort.fieldName === column.prop) {
         this.sort.order = this.sort.order === 'asc' ? 'desc' : 'asc'
       } else {
         this.sort.fieldName = column.prop
         this.sort.order = 'asc'
       }
-
       if (this.usesLocalData) {
         this.$emit('sort', this.sort)
       } else {
         this.mapDataToRows()
       }
-
     },
-
     getColumn (columnName) {
       return this.columns.find((column) => column.prop === columnName)
     },
-
     emitRowClick (row) {
       this.$emit('rowClick', row)
       this.$emit('row-click', row)
