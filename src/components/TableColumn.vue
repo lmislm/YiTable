@@ -19,6 +19,10 @@ export default {
       type: String,
       default: null
     },
+    dataType: {
+      type: String,
+      default: 'string',
+    },
     cellClass: {
       type: String,
       default: ''

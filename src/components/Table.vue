@@ -20,7 +20,7 @@
             <table-row
               :key="row.index"
               :row="row"
-              :class="[ index % 2 === 0 ? 'even' : 'odd' ]"
+              :class="[index%2 == 0 ? 'even' : 'odd']"
               :columns="columns"
               @rowClick="emitRowClick"
             />
@@ -30,8 +30,8 @@
         <slot name="footer" />
       </table>
     </div>
-    <div v-if="displayedRows.length === 0" class="yi-table__message">{{ filterNoResults }}</div>
-    <div style="display:none;">
+    <div v-if="displayedRows.length === 0" class="yi-table__empty-text">{{emptyText}}</div>
+    <div v-if="displayedRows.length === 0 && !emptyText" class="yi-table__empty">
       <slot />
     </div>
     <template v-if="pagination && count">
@@ -79,10 +79,6 @@ export default {
       type: String,
       default: ''
     },
-    cacheKey: {
-      type: String,
-      default: null
-    },
     cacheLifetime: {
       type: Number,
       default: 5
@@ -99,7 +95,7 @@ export default {
       type: Function,
       default: () => ''
     },
-    filterNoResults: {
+    emptyText: {
       type: String,
       default: ''
     }
@@ -144,11 +140,6 @@ export default {
         rows = rows.slice(lastElementOfLastPageIndex, lastElementOfLastPageIndex + this.pagination.perPage)
       }
       return rows
-    },
-    storageKey () {
-      const storageWithCacheKey = `vue-yi-table.${this.cacheKey}`
-      const storageWithoutCacheKey = `vue-yi-table.${window.location.host}${window.location.pathname}${this.cacheKey}`
-      return this.cacheKey ? storageWithCacheKey : storageWithoutCacheKey
     }
   },
   watch: {
@@ -187,9 +178,8 @@ export default {
       await this.mapDataToRows()
     },
     async mapDataToRows () {
-      const data = this.usesLocalData ? this.prepareLocalData() : await this.fetchServerData()
-      this.rows = data
-        .map((rowData, rowIndex) => new Row(rowData, this.columns, rowIndex))
+      const data = this.prepareLocalData()
+      this.rows = data.map((rowData, rowIndex) => new Row(rowData, this.columns, rowIndex))
       this.$emit('data-change')
     },
     paginationEllipsisClick (event) {
@@ -199,28 +189,14 @@ export default {
       this.count = this.data.length
       return this.data
     },
-    async fetchServerData () {
-      const page = (this.pagination && this.pagination.currentPage) || 1
-      const response = await this.data({
-        sort: this.sort,
-        page: page
-      })
-
-      this.count = response.count
-
-      return response.data
-    },
-    async refresh () {
-      await this.mapDataToRows()
-    },
     changeSorting (column) {
-      console.log(column, 'changeSort')
       if (this.sort.fieldName === column.prop) {
         this.sort.order = this.sort.order === 'asc' ? 'desc' : 'asc'
       } else {
         this.sort.fieldName = column.prop
         this.sort.order = 'asc'
       }
+      // 比较是否是本地缓存数据
       if (this.usesLocalData) {
         this.$emit('sort', this.sort)
       } else {

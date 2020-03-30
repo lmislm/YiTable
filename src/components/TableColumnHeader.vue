@@ -63,7 +63,6 @@ export default {
   methods: {
     clicked () {
       if (this.column.isSortable()) {
-        console.log('1111isSortable')
         this.$emit('click', this.column)
       }
     }
