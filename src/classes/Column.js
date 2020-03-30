@@ -54,11 +54,9 @@ export default class Column {
     return (row1, row2) => {
       const value1 = row1.getSortableValue(sortFieldName)
       const value2 = row2.getSortableValue(sortFieldName)
-
       if (sortOrder === 'desc') {
         return value2.localeCompare(value1)
       }
-
       return value1.localeCompare(value2)
     }
   }

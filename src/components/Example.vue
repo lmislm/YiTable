@@ -7,14 +7,12 @@
       { name: '王五', nickName: '五五', age: '12', birthday: '1998' },
       { name: '赵六', nickName: '六六', age: '15', birthday: '1990' },
      ]"
-      sort-by="age"
-      sort-order="asc"
     >
       <table-column prop="name" label="名字"></table-column>
-      <table-column prop="nickName" label="小名"></table-column>
-      <table-column prop="age" label="年龄" data-type="numeric" sortable></table-column>
+      <table-column prop="nickName" label="小名" sortable></table-column>
+      <table-column prop="age" label="年龄" sortable></table-column>
       <table-column prop="birthday" label="生日"></table-column>
-      <table-column label="操作" :sortable="false" :filterable="false">
+      <table-column label="操作" :filterable="false">
         <template slot-scope="row">
           <!-- <a :href="`#${row.name}`">编辑</a> -->
           {{row.name}}
@@ -40,9 +38,11 @@ export default {
     return {
       exampleData: [
         'data：显示的数据；',
+        'label：显示的标题；',
+        'sortable：（true/false）该列是否可排序，默认根据localeCompare来排序，特殊见dataType',
+        'dataType：（numeric/date）sortable为true时，numberic和date值根据数值大小排序',
         'prop：对应列内容的字段名，也可以使用 property 属性；',
         'formatter：它用于格式化指定列的值，接受一个Function，会传入两个参数：row和column；',
-        'label：显示的标题；'
       ]
     }
   }
