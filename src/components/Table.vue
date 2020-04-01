@@ -79,10 +79,6 @@ export default {
       type: String,
       default: ''
     },
-    cacheLifetime: {
-      type: Number,
-      default: 5
-    },
     tableClass: {
       type: Function,
       default: () => ''
