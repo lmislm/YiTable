@@ -1,6 +1,8 @@
 <template>
   <div class="example">
     <Table
+      @selection-change="handleSelection"
+      selectable
       :data="[
       { name: '张三，法外狂徒张三', nickName: '三三', age: '23', birthday: '1993' },
       { name: '李四', nickName: '四四', age: '32', birthday: '1992' },
@@ -24,6 +26,10 @@
       属性说明：
       <div class="row" v-for="(item, index) in exampleData" :key="index">{{item}}</div>
     </div>
+    <div class="selection">
+      选中行Selection
+      {{ selectionRows }}
+    </div>
   </div>
 </template>
 
@@ -36,6 +42,7 @@ export default {
   components: { Table, TableColumn, ColumnExample },
   data () {
     return {
+      selectionRows: [],
       exampleData: [
         'data：显示的数据；',
         'label：显示的标题；',
@@ -45,8 +52,16 @@ export default {
         'formatter：它用于格式化指定列的值，接受一个Function，会传入两个参数：row和column；',
         '-----',
         'table：data、sortBy、sortOrder、emptyText、tableClass、theadClass、tbodyClass',
-        'table-column: prop、label、hidden、sortable、dataType、cellClass、headerClass、formatter、sortBy'
+        'table-column: prop、label、hidden、sortable、dataType、cellClass、headerClass、formatter、sortBy',
+        'toggleRowSelection、clearSelection'
       ]
+    }
+  },
+  methods: {
+    handleSelection (selection) {
+      // 有bug
+      // this.selectionRows = selection
+      console.log(selection, 'example')
     }
   }
 }

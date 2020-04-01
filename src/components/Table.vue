@@ -5,6 +5,10 @@
         <thead :class="tableHeadClass">
           <slot name="before-header" :columns="columns" />
           <tr>
+            <!-- selectale抽离成组件？ -->
+            <th v-if="selectable">
+              <input type="checkbox" @click="toggleSelectAll"/>
+            </th>
             <table-column-header
               v-for="column in columns"
               :key="column.prop"
@@ -12,6 +16,9 @@
               :column="column"
               @click="changeSorting"
             />
+            <!-- :all-selected="toggleSelectAlled"
+            :indeterminate-selected="indeterminateSelected"
+            :selectable="selectable"-->
           </tr>
           <slot name="after-header" :columns="columns" />
         </thead>
@@ -22,7 +29,9 @@
               :row="row"
               :class="[index%2 == 0 ? 'even' : 'odd']"
               :columns="columns"
+              :selectable="selectable"
               @rowClick="emitRowClick"
+              @rowSelect="emitRowSelectClick"
             />
             <slot name="after-row" :index="index" :row="row.data" :columns="columns" />
           </template>
@@ -54,10 +63,14 @@ import Row from '../classes/Row'
 import TableColumnHeader from './TableColumnHeader'
 import TableRow from './TableRow'
 import TablePagination from './TablePagination'
-import { classList } from '../utils'
+import { classList, toggleRowStatus } from '../utils'
 
 export default {
-  components: { TableColumnHeader, TableRow, TablePagination },
+  components: {
+    TableColumnHeader,
+    TableRow,
+    TablePagination
+  },
   props: {
     data: {
       type: [Array, Function],
@@ -78,6 +91,10 @@ export default {
     sortOrder: {
       type: String,
       default: ''
+    },
+    selectable: {
+      type: Boolean,
+      default: false
     },
     emptyText: {
       type: String,
@@ -105,7 +122,8 @@ export default {
       order: ''
     },
     count: undefined,
-    localSettings: {},
+    selection: [],
+    isAllSelected: false
   }),
 
   computed: {
@@ -135,7 +153,6 @@ export default {
       //   const lastElementOfLastPageIndex = lastPage * this.pagination.perPage
       //   rows = rows.slice(lastElementOfLastPageIndex, lastElementOfLastPageIndex + this.pagination.perPage)
       // }
-      // return rows
       if (!this.usesLocalData) {
         return this.sortedRows
       }
@@ -233,9 +250,84 @@ export default {
       return this.columns.find((column) => column.prop === columnName)
     },
     emitRowClick (row) {
-      this.$emit('rowClick', row)
+      // this.$emit('rowClick', row)
       this.$emit('row-click', row)
+    },
+    emitRowSelectClick () {
+      const selectRows = this.displayedRows.filter(row => !!row.isSelected)
+      const selection = (this.deleteProp(selectRows, 'isSelected') || [])
+        .map(row => row.data)
+      // 累计所有选中的数据的data，推入一个数组
+      this.selection = selection.slice()
+      this.$emit('selection-change', this.selection)
+    },
+    toggleSelectAll () {
+      this.isAllSelected = !this.isAllSelected
+      const rows = this.rows.map(row => ({...row, isSelected: this.isAllSelected}))
+      console.log(rows)
+      // 清空所有选中状态
+      // this.displayedRows = this.sortedRows.map(row => ({
+      //   ...row,
+      //   isSelected: false
+      // }))
+      // // this.$emit('selection-change', [])
+      // console.log(this.displayedRows, 'displayedRows')
+    },
+    initSelected () {
+      console.log('initSelected')
+    },
+    clearSelection () {
+      // 清空所有选中状态
+      this.displayedRows.forEach(row => {
+        if (row.isSelected !== 'undefined' && row.isSelected) {
+          row.isSelected = false
+        }
+      })
+      this.$emit('selection-change', [])
+    },
+    testRowSelect () {
+      console.log(this.selection, 'slice()')
+      this.toggleRowSelection(this.displayedRows[2].data, true)
+    },
+    toggleRowSelection (row, isSelected) {
+      const change = toggleRowStatus(this.selection, row, isSelected)
+      if (change) {
+        // this.setRowSelectedStatus(this.displayedRows, row, isSelected)
+        // console.log(this.selection, 'selection, toggleRow', this.displayedRows)
+      }
+      console.log(change)
+    },
+    setRowSelectedStatus (rows, row, status) {
+      const index = rows.indexOf(row)
+      // rows[index].isSelected = status
+      rows.forEach((row, i) => {
+        if (i === index) {
+          row.isSelected = status
+        }
+      })
+    },
+    deleteProp (data, prop) {
+      // TODO: 这里要用map嘛?
+      return data.map(row => {
+        // TODO: 配置eslint，Es6展开，会有no-unused-vars，Object.assign复制会有问题吗？
+        const newRow = Object.assign({}, row)
+        delete newRow[prop]
+        return newRow
+      })
     }
   }
 }
 </script>
+<style>
+/* 这里是一个暂时的接口，可能要封装到外部的class文件 */
+td,
+th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+</style>
+
