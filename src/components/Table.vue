@@ -79,6 +79,10 @@ export default {
       type: String,
       default: ''
     },
+    emptyText: {
+      type: String,
+      default: ''
+    },
     tableClass: {
       type: Function,
       default: () => ''
@@ -90,10 +94,6 @@ export default {
     tbodyClass: {
       type: Function,
       default: () => ''
-    },
-    emptyText: {
-      type: String,
-      default: ''
     }
   },
 
