@@ -8,7 +8,6 @@
 import cell from './cell'
 
 export default {
-
   components: {
     cell
   },
@@ -22,7 +21,6 @@ export default {
       required: true
     }
   },
-
   computed: {
     visibleColumns () {
       return this.columns.filter((column) => !column.hidden)
