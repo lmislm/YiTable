@@ -7,7 +7,11 @@
           <tr>
             <!-- selectale抽离成组件？ -->
             <th v-if="selectable">
-              <input type="checkbox" @click="toggleSelectAll"/>
+              <input
+                type="checkbox"
+                v-model="isAllSelected"
+                :indeterminate.prop="allSelectedIndeterminate"
+              />
             </th>
             <table-column-header
               v-for="column in columns"
@@ -16,9 +20,6 @@
               :column="column"
               @click="changeSorting"
             />
-            <!-- :all-selected="toggleSelectAlled"
-            :indeterminate-selected="indeterminateSelected"
-            :selectable="selectable"-->
           </tr>
           <slot name="after-header" :columns="columns" />
         </thead>
@@ -123,7 +124,8 @@ export default {
     },
     count: undefined,
     selection: [],
-    isAllSelected: false
+    isAllSelected: false,
+    allSelectedIndeterminate: false
   }),
 
   computed: {
@@ -147,12 +149,6 @@ export default {
       return Array.isArray(this.data)
     },
     displayedRows () {
-      // let rows = this.rows // 前端分页，TODO: 加attr来判断
-      // if (this.usesLocalData && this.pagination) {
-      //   const lastPage = this.pagination.currentPage - 1
-      //   const lastElementOfLastPageIndex = lastPage * this.pagination.perPage
-      //   rows = rows.slice(lastElementOfLastPageIndex, lastElementOfLastPageIndex + this.pagination.perPage)
-      // }
       if (!this.usesLocalData) {
         return this.sortedRows
       }
@@ -190,6 +186,17 @@ export default {
       if (this.usesLocalData) {
         this.mapDataToRows()
       }
+    },
+    isAllSelected (v) {
+      this.displayedRows.forEach(row => {
+        this.$set(row, 'isSelected', v)
+      })
+      this.$emit('select-all', this.displayedRows)
+      if (v) {
+        // 重置模糊选择状态
+        this.allSelectedIndeterminate = false
+      }
+      this.emitRowSelectClick({ isAll: true })
     }
   },
   created () {
@@ -250,31 +257,31 @@ export default {
       return this.columns.find((column) => column.prop === columnName)
     },
     emitRowClick (row) {
-      // this.$emit('rowClick', row)
       this.$emit('row-click', row)
     },
-    emitRowSelectClick () {
+    emitRowSelectClick (options) {
       const selectRows = this.displayedRows.filter(row => !!row.isSelected)
       const selection = (this.deleteProp(selectRows, 'isSelected') || [])
         .map(row => row.data)
       // 累计所有选中的数据的data，推入一个数组
       this.selection = selection.slice()
+      this.setHeaderCheckboxStatus(options)
       this.$emit('selection-change', this.selection)
     },
-    toggleSelectAll () {
-      this.isAllSelected = !this.isAllSelected
-      const rows = this.rows.map(row => ({...row, isSelected: this.isAllSelected}))
-      console.log(rows)
-      // 清空所有选中状态
-      // this.displayedRows = this.sortedRows.map(row => ({
-      //   ...row,
-      //   isSelected: false
-      // }))
-      // // this.$emit('selection-change', [])
-      // console.log(this.displayedRows, 'displayedRows')
-    },
-    initSelected () {
-      console.log('initSelected')
+    setHeaderCheckboxStatus (options) {
+      if (!options.isAll) {
+        if (this.selection.length < this.displayedRows.length) {
+          this.allSelectedIndeterminate = true
+        }
+        if (this.selection.length === this.displayedRows.length) {
+          this.isAllSelected = true
+          this.allSelectedIndeterminate = false
+        }
+        if (this.selection.length === 0) {
+          this.allSelectedIndeterminate = false
+          this.isAllSelected = false
+        }
+      }
     },
     clearSelection () {
       // 清空所有选中状态
@@ -314,6 +321,9 @@ export default {
         delete newRow[prop]
         return newRow
       })
+    },
+    emitSelectedRows () {
+
     }
   }
 }
