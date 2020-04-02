@@ -3,6 +3,13 @@
   "version": "0.1.0",
   "description": "yicat表格组件",
   "jsnext:main": "src/index.js",
+  "keywords": ["表格", "vuejs"],
+  "author": "lmislm",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build src/index.js",
