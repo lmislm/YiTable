@@ -12,15 +12,15 @@
     >
       <table-column prop="name" label="名字"></table-column>
       <table-column prop="nickName" label="小名" sortable></table-column>
-      <table-column prop="age" label="年龄" sortable></table-column>
-      <table-column prop="birthday" label="生日"></table-column>
+      <table-column prop="age" label="年龄" dataType="numeric" sortable></table-column>
+      <table-column prop="birthday" label="生日" sortable></table-column>
       <table-column label="操作" :filterable="false">
         <template slot-scope="row">
           <!-- <a :href="`#${row.name}`">编辑</a> -->
           {{row.name}}
         </template>
       </table-column>
-      <column-example prop="b" />
+      <!-- <column-example prop="b" /> -->
     </Table>
     <div class="desc">
       属性说明：
@@ -36,10 +36,13 @@
 <script>
 import Table from './Table.vue'
 import TableColumn from './TableColumn.vue'
-import ColumnExample from './ColumnExample.vue'
+// import ColumnExample from './ColumnExample.vue'
 
 export default {
-  components: { Table, TableColumn, ColumnExample },
+  components: {
+    Table,
+    TableColumn
+  },
   data () {
     return {
       selectionRows: [],
