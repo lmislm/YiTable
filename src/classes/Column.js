@@ -44,10 +44,10 @@ export default class Column {
         const value2 = row2.getSortableValue(sortFieldName)
 
         if (sortOrder === 'desc') {
-          return value2 < value1 ? -1 : 1
+          return this.fNumber(value2) < this.fNumber(value1) ? -1 : 1
         }
 
-        return value1 < value2 ? -1 : 1
+        return this.fNumber(value1) < this.fNumber(value2) ? -1 : 1
       }
     }
 
@@ -59,6 +59,10 @@ export default class Column {
       }
       return value1.localeCompare(value2)
     }
+  }
+
+  fNumber (value) {
+    return Number(value) || value
   }
 
   getSortFieldName() {
