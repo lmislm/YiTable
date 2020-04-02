@@ -269,6 +269,7 @@ export default {
       this.$emit('selection-change', this.selection)
     },
     setHeaderCheckboxStatus (options) {
+      // 这种做法绝对有问题，TODO: 优化该部分
       if (!options.isAll) {
         if (this.selection.length < this.displayedRows.length) {
           this.allSelectedIndeterminate = true
@@ -287,9 +288,12 @@ export default {
       // 清空所有选中状态
       this.displayedRows.forEach(row => {
         if (row.isSelected !== 'undefined' && row.isSelected) {
-          row.isSelected = false
+          this.$set(row, 'isSelected', false)
         }
       })
+      // TODO: 优化这里的方法
+      this.allSelectedIndeterminate = false
+      this.isAllSelected = false
       this.$emit('selection-change', [])
     },
     testRowSelect () {
