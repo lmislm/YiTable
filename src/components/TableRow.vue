@@ -1,7 +1,15 @@
 <template>
   <tr @click="$emit('rowClick', row)">
-    <td v-if="selectable"><input type="checkbox" @click.stop="onCheckboxClick" :checked="row.isSelected"></td>
-    <cell v-for="column in visibleColumns" :key="column.id" :row="row" :column="column" :selectable="selectable" />
+    <td v-if="selectable" style="width:55px;text-align: center;">
+      <input type="checkbox" @click.stop="onCheckboxClick" :checked="row.isSelected" />
+    </td>
+    <cell
+      v-for="column in visibleColumns"
+      :key="column.id"
+      :row="row"
+      :column="column"
+      :selectable="selectable"
+    />
   </tr>
 </template>
 
