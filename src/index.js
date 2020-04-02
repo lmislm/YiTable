@@ -1,17 +1,13 @@
-import Vue from 'vue'
-
 import YiTable from './components/Table'
 import YiColumn from './components/TableColumn'
-import YiPagination from './components/TablePagination';
+import YiPagination from './components/TablePagination'
 
-import ColumnMixin from './components/column-mixin'
-
-import Example from './components/Example'
-
-if (process.env.NODE_ENV !== 'production') {
-  new Vue({
-    render: (h) => h(Example),
-  }).$mount('#app')
+export default {
+  install(Vue) {
+    Vue.component('yi-table', YiTable)
+    Vue.component('yi-column', YiColumn)
+    Vue.component('yi-pagination', YiPagination)
+  }
 }
 
-export { YiTable, YiColumn, YiPagination, ColumnMixin }
+export {YiTable, YiColumn}
