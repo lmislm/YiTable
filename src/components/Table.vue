@@ -28,7 +28,8 @@
             <table-row
               :key="row.index"
               :row="row"
-              :class="[index%2 == 0 ? 'even' : 'odd']"
+              :index="index"
+              :class="[index%2 == 1 ? 'even' : 'odd']"
               :columns="columns"
               :selectable="selectable"
               @rowClick="emitRowClick"
