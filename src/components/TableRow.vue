@@ -7,8 +7,8 @@
       v-for="column in visibleColumns"
       :key="column.id"
       :row="row"
+      :index="index"
       :column="column"
-      :selectable="selectable"
     />
   </tr>
 </template>
@@ -32,7 +32,8 @@ export default {
     selectable: {
       type: Boolean,
       default: false
-    }
+    },
+    index: Number
   },
   computed: {
     visibleColumns () {

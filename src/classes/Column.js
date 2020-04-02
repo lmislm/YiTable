@@ -3,6 +3,7 @@ import { pick } from '../utils'
 export default class Column {
   constructor(columnComponent) {
     const properties = pick(columnComponent, [
+      'type',
       'prop',
       'label',
       'dataType', // 限定的比较死

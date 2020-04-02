@@ -8,6 +8,7 @@
 
 export default {
   props: {
+    type: String,
     prop: {
       type: String
     },

@@ -1,6 +1,6 @@
 export default {
   functional: true,
-  props: ['column', 'row'],
+  props: ['column', 'row', 'index'],
   render(createElement, { props }) {
     const data = {}
     if (props.column.cellClass) {
@@ -38,6 +38,8 @@ export default {
       createElement(
         'span',
         { class: 'cell' },
+        // 真实id还是实时的index
+        // isColumnIndex ? props.index + 1 : props.row.getValue(props.column.prop)
         isColumnIndex ? props.row.index + 1 : props.row.getValue(props.column.prop)
       )
     ])

@@ -7,7 +7,7 @@
     :aria-disabled="ariaDisabled"
     @click="clicked"
   >
-    <span class="cell">{{ label }}</span>
+    <span class="cell">{{ isTypeIndex ? '#' : label }}</span>
   </th>
 </template>
 
@@ -58,6 +58,9 @@ export default {
         return this.column.prop
       }
       return this.column.label
+    },
+    isTypeIndex () {
+      return this.column.type && this.column.type === 'index'
     }
   },
   methods: {
