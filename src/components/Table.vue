@@ -1,7 +1,7 @@
 <template>
   <div class="yi-table">
     <div class="yi-table__table-wrapper">
-      <table :class="fullTableClass">
+      <table :class="fullTableClass" border="0" cellspacing="0" cellpadding="0">
         <thead :class="tableHeadClass">
           <slot name="before-header" :columns="columns" />
           <tr>
@@ -112,7 +112,9 @@ export default {
     tbodyClass: {
       type: Function,
       default: () => ''
-    }
+    },
+    stripe: Boolean,
+    border: Boolean
   },
 
   data: () => ({
@@ -130,13 +132,15 @@ export default {
 
   computed: {
     fullTableClass () {
-      return classList('yi-table__table', this.tableClass)
+      const border = this.border ? 'border' : ''
+      const stripe = this.stripe ? 'stripe' : ''
+      return classList('yi-table__table', [this.tableClass, border, stripe])
     },
     tableHeadClass () {
-      return classList('yi-table__table__head', this.theadClass)
+      return classList('yi-table__head', this.theadClass)
     },
     tableBodyClass () {
-      return classList('yi-table__table__body', this.tbodyClass)
+      return classList('yi-table__body', this.tbodyClass)
     },
     ariaCaption () {
       if (this.sort.fieldName === '') {
@@ -332,16 +336,107 @@ export default {
   }
 }
 </script>
-<style>
-/* 这里是一个暂时的接口，可能要封装到外部的class文件 */
-td,
-th {
-  border: 1px solid #dddddd;
-  text-align: left;
-  padding: 8px;
-}
-tr:nth-child(even) {
-  background-color: #dddddd;
+<style lang="scss">
+$--color-white: #ffffff !default;
+$--color-text-regular: #606266 !default;
+$--border-color-lighter: #ebeef5 !default;
+$--color-primary-light-1: #ecf5ff;
+$--background-color-base: #f5f7fa !default;
+
+$--table-border-color: $--border-color-lighter !default;
+
+$--table-font-color: $--color-text-regular;
+$--table-border: 1px solid $--table-border-color !default;
+$--table-current-row-background-color: $--color-primary-light-1 !default;
+$--table-row-hover-background-color: $--background-color-base !important;
+
+.yi-table {
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+  flex: 1;
+  width: 100%;
+  max-width: 100%;
+  background-color: $--color-white;
+  font-size: 14px;
+  color: $--table-font-color;
+  .border {
+    border-left: $--table-border;
+    border-top: $--table-border;
+    th,
+    td {
+      border-right: $--table-border;
+    }
+    // // 表格左边伪 border
+    // &::after {
+    //   top: 0;
+    //   left: 0;
+    //   width: 1px;
+    //   height: 100%;
+    // }
+    // // 表格顶部伪 border
+    // &::before {
+    //   left: 0;
+    //   top: 0;
+    //   width: 100%;
+    //   height: 1px;
+    // }
+  }
+  .stripe {
+    & .yi-table__body {
+      & tr.even {
+        td {
+          background: #fafafa;
+        }
+      }
+    }
+  }
+  .el-table__body td {
+    transition: background-color 0.25s ease;
+  }
+  .yi-table__body tr:hover > td {
+    background-color: $--table-row-hover-background-color;
+  }
+
+  th,
+  td {
+    border-bottom: $--table-border;
+    border-bottom-width: 1px;
+  }
+  th,
+  td {
+    // padding: 6px 0; // mini
+    padding: 8px 0; // small
+    // padding: 10px 0; // medium
+    min-width: 0;
+    box-sizing: border-box;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+    position: relative;
+    // text-align: left;
+  }
+  .cell {
+    box-sizing: border-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal;
+    word-break: break-all;
+    line-height: 23px;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  tr {
+    background-color: $--color-white;
+    input[type='checkbox'] {
+      margin: 0;
+    }
+    // &:nth-child(even) {
+    //   background-color: #ebeef5;
+    // }
+  }
+  tr {
+    // border-bottom: 1px solid red;
+    border-bottom: $--table-border;
+  }
 }
 </style>
-

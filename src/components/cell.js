@@ -13,18 +13,32 @@ export default {
       data.style = { 'min-width': parseInt(props.column.minWidth) + 'px' }
     }
     if (props.column.template) {
-      return createElement('td', data, props.column.template(props.row.data))
+      return createElement('td', data, [
+        createElement(
+          'span',
+          { class: 'cell' },
+          props.column.template(props.row.data)
+        )
+      ])
     }
     if (props.column.component) {
       const component = props.column.component
       component.componentOptions.propsData.row = props.row.data
       return component
     }
-    data.domProps = {}
-    data.domProps.innerHTML = props.column.formatter(
-      props.row.getValue(props.column.prop),
-      props.row.data
-    )
-    return createElement('td', data)
+    if (props.column.formatter.name !== '_default') {
+      data.domProps = {}
+      data.domProps.innerHTML = props.column.formatter(
+        props.row.getValue(props.column.prop),
+        props.row.data
+      )
+    }
+    return createElement('td', data, [
+      createElement(
+        'span',
+        { class: 'cell' },
+        props.row.getValue(props.column.prop)
+      )
+    ])
   }
 }
