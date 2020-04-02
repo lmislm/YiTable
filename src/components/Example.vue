@@ -1,6 +1,8 @@
 <template>
   <div class="example">
     <Table
+      border
+      stripe
       @selection-change="handleSelection"
       selectable
       :data="[
@@ -8,9 +10,15 @@
       { name: '李四', nickName: '四四', age: '32', birthday: '1992' },
       { name: '王五', nickName: '五五', age: '12', birthday: '1998' },
       { name: '赵六', nickName: '六六', age: '15', birthday: '1990' },
+      { name: '七', nickName: '七七', age: '27', birthday: '2003' },
+      { name: '八', nickName: '八八', age: '82', birthday: '2001' },
+      { name: '九', nickName: '九九', age: '29', birthday: '2008' },
+      { name: '十', nickName: '十十', age: '10', birthday: '2010' },
+      { name: '十二', nickName: '十二十二', age: '1212', birthday: '91' },
+      { name: '十三', nickName: '十五十五', age: '-1', birthday: '2118' }
      ]"
     >
-      <table-column prop="name" label="名字"></table-column>
+      <table-column prop="name" label="名字" min-width="100" cellClass="test"></table-column>
       <table-column prop="nickName" label="小名" sortable></table-column>
       <table-column prop="age" label="年龄" dataType="numeric" sortable></table-column>
       <table-column prop="birthday" label="生日" sortable></table-column>
