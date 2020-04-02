@@ -351,6 +351,8 @@ $--table-border: 1px solid $--table-border-color !default;
 $--table-current-row-background-color: $--color-primary-light-1 !default;
 $--table-row-hover-background-color: $--background-color-base !important;
 
+$align: center;
+
 .yi-table {
   position: relative;
   overflow: hidden;
@@ -414,9 +416,11 @@ $--table-row-hover-background-color: $--background-color-base !important;
     text-overflow: ellipsis;
     vertical-align: middle;
     position: relative;
-    // text-align: left;
+    text-align: $align;
   }
   .cell {
+    display: inline-block;
+    width: 100%;
     box-sizing: border-box;
     overflow: hidden;
     text-overflow: ellipsis;
