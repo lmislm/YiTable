@@ -11,6 +11,8 @@ export default class Column {
       'hidden',
       'formatter',
       'cellClass',
+      'width',
+      'minWidth',
       'headerClass'
     ])
 

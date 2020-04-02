@@ -6,6 +6,12 @@ export default {
     if (props.column.cellClass) {
       data.class = props.column.cellClass
     }
+    if (props.column.width) {
+      data.style = { width: parseInt(props.column.width) + 'px' }
+    }
+    if (props.column.minWidth) {
+      data.style = { 'min-width': parseInt(props.column.minWidth) + 'px' }
+    }
     if (props.column.template) {
       return createElement('td', data, props.column.template(props.row.data))
     }

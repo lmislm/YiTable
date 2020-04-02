@@ -23,6 +23,8 @@ export default {
       type: String,
       default: 'string',
     },
+    width: String,
+    minWidth: String,
     cellClass: {
       type: String,
       default: ''
