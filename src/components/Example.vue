@@ -15,9 +15,12 @@
       { name: '九', nickName: '九九', age: '29', birthday: '2008' },
       { name: '十', nickName: '十十', age: '10', birthday: '2010' },
       { name: '十二', nickName: '十二十二', age: '1212', birthday: '91' },
-      { name: '十三', nickName: '十五十五', age: '-1', birthday: '2118' }
+      { name: '十三', nickName: '十五十五', age: '-1', birthday: '2118' },
+      { name: '十四', nickName: '十', age: '-4', birthday: '2118' }
      ]"
     >
+      <div slot="after-header">我可能是个筛选框</div>
+      <!-- <div slot="after-row">我是列</div> -->
       <table-column type="index" width="55" sortable></table-column>
       <table-column prop="name" label="名字" width="100"></table-column>
       <table-column prop="nickName" label="小名" sortable></table-column>
