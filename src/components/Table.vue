@@ -6,7 +6,7 @@
           <slot name="before-header" :columns="columns" />
           <tr>
             <!-- selectale抽离成组件？ -->
-            <th v-if="selectable">
+            <th v-if="selectable" style="width:55px;text-align: center;">
               <input
                 type="checkbox"
                 v-model="isAllSelected"
