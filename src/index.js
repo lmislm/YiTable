@@ -1,13 +1,7 @@
 import YiTable from './components/Table'
 import YiColumn from './components/TableColumn'
-import YiPagination from './components/TablePagination'
+import YiPagination from './components/TablePagination';
 
-export default {
-  install(Vue) {
-    Vue.component('yi-table', YiTable)
-    Vue.component('yi-column', YiColumn)
-    Vue.component('yi-pagination', YiPagination)
-  }
-}
+import ColumnMixin from './components/column-mixin'
 
-export {YiTable, YiColumn}
+export { YiTable, YiColumn, YiPagination, ColumnMixin }

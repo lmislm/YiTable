@@ -1,6 +1,7 @@
 {
   "name": "yi-table",
   "version": "0.1.0",
+  "description": "yicat表格组件",
   "private": true,
   "jsnext:main": "src/index.js",
   "scripts": {
