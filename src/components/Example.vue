@@ -18,7 +18,8 @@
       { name: '十三', nickName: '十五十五', age: '-1', birthday: '2118' }
      ]"
     >
-      <table-column prop="name" label="名字" min-width="100" cellClass="test"></table-column>
+      <table-column type="index" width="55" sortable></table-column>
+      <table-column prop="name" label="名字" width="100"></table-column>
       <table-column prop="nickName" label="小名" sortable></table-column>
       <table-column prop="age" label="年龄" dataType="numeric" sortable></table-column>
       <table-column prop="birthday" label="生日" sortable></table-column>
