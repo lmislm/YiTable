@@ -24,7 +24,6 @@
       <table-column prop="birthday" label="生日" sortable></table-column>
       <table-column label="操作" :filterable="false">
         <template slot-scope="row">
-          <!-- <a :href="`#${row.name}`">编辑</a> -->
           {{row.name}}
         </template>
       </table-column>
@@ -63,7 +62,7 @@ export default {
         'formatter：它用于格式化指定列的值，接受一个Function，会传入两个参数：row和column；',
         '-----',
         'table：data、sortBy、sortOrder、emptyText、tableClass、theadClass、tbodyClass',
-        'table-column: prop、label、hidden、sortable、dataType、cellClass、headerClass、formatter、sortBy',
+        'table-column: prop、label、hidden、sortable、dataType、cellClass、headerClass、formatter、sortBy、width、min-width',
         'toggleRowSelection、clearSelection'
       ]
     }
