@@ -33,11 +33,12 @@ export default {
         props.row.data
       )
     }
+    const isColumnIndex = props.column.type && props.column.type === 'index'
     return createElement('td', data, [
       createElement(
         'span',
         { class: 'cell' },
-        props.row.getValue(props.column.prop)
+        isColumnIndex ? props.row.index + 1 : props.row.getValue(props.column.prop)
       )
     ])
   }

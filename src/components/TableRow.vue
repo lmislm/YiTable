@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import cell from './cell'
+import cell from './rowCell'
 
 export default {
   components: {
