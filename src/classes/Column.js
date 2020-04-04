@@ -22,8 +22,8 @@ export default class Column {
         this[property] = columnComponent.componentInstance[property]
       }
     }
-
-    if (columnComponent.componentOptions.tag === 'table-column') {
+    // TODO: 这里的tag判断只是为了在本组件中插入组件Component
+    if (columnComponent.componentOptions.tag.indexOf('table-column')) {
       this.template = columnComponent.componentInstance.$scopedSlots.default
     } else {
       this.component = columnComponent
