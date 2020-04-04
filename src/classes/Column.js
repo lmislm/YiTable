@@ -23,7 +23,7 @@ export default class Column {
       }
     }
     // TODO: 这里的tag判断只是为了在本组件中插入组件Component
-    if (columnComponent.componentOptions.tag.indexOf('table-column')) {
+    if (~columnComponent.componentOptions.tag.indexOf('table-column')) {
       this.template = columnComponent.componentInstance.$scopedSlots.default
     } else {
       this.component = columnComponent
