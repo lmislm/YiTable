@@ -2,8 +2,8 @@
   <div class="yi-table">
     <div class="yi-table__table-wrapper">
       <table :class="fullTableClass" border="0" cellspacing="0" cellpadding="0">
+        <slot name="before-header" :columns="columns" />
         <thead :class="tableHeadClass">
-          <slot name="before-header" :columns="columns" />
           <tr>
             <!-- selectale抽离成组件？ -->
             <th v-if="selectable" style="width:55px;text-align: center;">
@@ -21,7 +21,12 @@
               @click="changeSorting"
             />
           </tr>
-          <slot name="after-header" :columns="columns" />
+          <!-- 这里的slot顺序有问题，应该要把input:checkbox写到table-column-header组件里面 -->
+          <tr v-show="filterable">
+            <th v-for="column in columns" :key="column.prop">
+              <slot :name="column.prop"/>
+            </th>
+          </tr>
         </thead>
         <tbody :class="tableBodyClass">
           <template v-for="(row, index) in displayedRows">
@@ -98,6 +103,7 @@ export default {
       type: Boolean,
       default: false
     },
+    filterable: Boolean,
     emptyText: {
       type: String,
       default: ''
