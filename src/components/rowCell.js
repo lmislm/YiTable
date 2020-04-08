@@ -17,8 +17,12 @@ export default {
         createElement(
           'span',
           { class: 'cell' },
-          props.column.template(props.row.data)
-        )
+          props.column.template({
+            row: props.row.data,
+            column: props.column,
+            $index: props.index
+          })
+        ),
       ])
     }
     if (props.column.component) {
