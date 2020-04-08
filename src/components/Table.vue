@@ -150,7 +150,7 @@ export default {
       return `Table sorted by ${this.sort.fieldName} ${
         this.sort.order === 'asc' ? '(ascending)' : '(descending)'}`
     },
-    usesLocalData () {
+    usesLocalData () { // TODO: cache缓存
       return Array.isArray(this.data)
     },
     displayedRows () {
@@ -330,9 +330,6 @@ export default {
         delete newRow[prop]
         return newRow
       })
-    },
-    emitSelectedRows () {
-
     }
   }
 }
