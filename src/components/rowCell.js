@@ -36,6 +36,7 @@ export default {
       component.componentOptions.propsData.row = props.row.data
       return component
     }
+    // TODO: 优化Function的判断
     if (props.column.formatter.name !== '_default') {
       data.domProps = {}
       data.domProps.innerHTML = props.column.formatter(
@@ -62,11 +63,13 @@ export default {
         {
           class: 'cell'
         },
-        // 真实id还是实时的index, 真实id:props.index,实时index:props.row.index
+        // 真实id还是实时的index, 实时id:props.index,真实index:props.row.index
         // isColumnIndex ? props.index + 1 : props.row.getValue(props.column.prop)
         [
           isColumnIndex
-            ? props.row.index + 1
+            ? isRealColumnIndex
+              ? props.row.index + 1
+              : props.index + 1
             : isColumnSelection
             ? children // slots().default
             : props.row.getValue(props.column.prop)
