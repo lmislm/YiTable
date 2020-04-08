@@ -7,7 +7,7 @@
     :aria-disabled="ariaDisabled"
     @click="clicked"
   >
-    <span class="cell">{{ isTypeIndex ? '#' : label }}</span>
+    <span class="cell">{{ isTypeIndex ? (label || '#') : label }}</span>
   </th>
 </template>
 
