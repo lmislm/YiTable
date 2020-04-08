@@ -20,8 +20,8 @@
         { name: '十四', nickName: '十', age: '-4', birthday: '2118' }
       ]"
       >
-        <!-- <div slot="nickName">名字搜索</div> -->
-        <table-column type="index" width="55" label="序号" dataType="numeric" sortable></table-column>
+        <div slot="name">名字搜索</div>
+        <table-column type="index" width="55" label="序号" sortable></table-column>
         <table-column type="selection" width="55"></table-column>
         <table-column prop="name" label="名字" width="100"></table-column>
         <table-column prop="nickName" label="小名" sortable></table-column>
@@ -67,7 +67,7 @@ export default {
       exampleData: [
         'data：显示的数据；',
         'label：显示的标题；',
-        'sortable：（true/false）该列是否可排序，默认根据localeCompare来排序，特殊见dataType',
+        'sortable：（true/false）该列是否可排序，默认根据localeCompare来排序，特殊见dataType,注意：type="index"时，dataType不起作用，默认是数字排序',
         'dataType：（numeric/date）sortable为true时，numberic和date值根据数值大小排序',
         'prop：对应列内容的字段名，也可以使用 property 属性；',
         'formatter：它用于格式化指定列的值，接受一个Function，会传入两个参数：row和column；',
