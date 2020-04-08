@@ -38,7 +38,7 @@ export default {
       createElement(
         'span',
         { class: 'cell' },
-        // 真实id还是实时的index
+        // 真实id还是实时的index, 真实id:props.index,实时index:props.row.index
         // isColumnIndex ? props.index + 1 : props.row.getValue(props.column.prop)
         isColumnIndex ? props.row.index + 1 : props.row.getValue(props.column.prop)
       )
