@@ -12,6 +12,7 @@
         type="checkbox"
         @click.stop="onCheckboxClick"
         :checked="row.isSelected"
+        :disabled="!row.isSelectable"
       />
     </cell>
   </tr>
@@ -51,6 +52,9 @@ export default {
         selected: !!row.isSelected
       })
     }
+  },
+  created () {
+    this.$set(this.row, 'isSelectable', !this.row.selectable)
   }
 }
 </script>

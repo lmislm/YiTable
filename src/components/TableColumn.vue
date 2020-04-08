@@ -45,6 +45,10 @@ export default {
     hidden: {
       type: Boolean,
       default: false
+    },
+    selectable: {
+      type: Function,
+      default: (v) => v
     }
   }
 }

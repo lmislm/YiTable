@@ -43,9 +43,19 @@ export default {
         props.row.data
       )
     }
-    const isColumnIndex = props.column.type && props.column.type === 'index'
-    const isColumnSelection =
-      props.column.type && props.column.type === 'selection'
+    if (props.column.selectable.name !== '_default') {
+      const canSelect = props.column.selectable(props.row.data, props.row.index)
+      // 注意：先赋值给isSelectable，然后再确定是否被选中
+      props.row.isSelectable = canSelect
+      props.row.isSelected = canSelect ? props.row.isSelected : false
+    }
+    // 表格列类型
+    const columnType = props.column.type
+    const isColumnIndex = columnType && columnType === 'index'
+    const isColumnSelection = columnType && columnType === 'selection'
+    // 序号列是否用的是实时的index
+    const isRealColumnIndex = true // options
+    console.log(children, 'children')
     return createElement('td', data, [
       createElement(
         'span',

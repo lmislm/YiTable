@@ -8,6 +8,7 @@ export default class Column {
       'label',
       'dataType', // 限定的比较死
       'sortable',
+      'selectable', // Function
       'sortBy',
       'hidden',
       'formatter',
