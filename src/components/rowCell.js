@@ -49,8 +49,8 @@ export default {
           isColumnIndex
             ? props.row.index + 1
             : isColumnSelection
-              ? children
-              : props.row.getValue(props.column.prop),
+            ? children // slots().default
+            : props.row.getValue(props.column.prop)
         ]
       )
     ])
