@@ -7,7 +7,12 @@
       :index="index"
       :column="column"
     >
-      <input v-if="column.type === 'selection'" type="checkbox" @click.stop="onCheckboxClick" :checked="row.isSelected" />
+      <input
+        v-if="column.type === 'selection'"
+        type="checkbox"
+        @click.stop="onCheckboxClick"
+        :checked="row.isSelected"
+      />
     </cell>
   </tr>
 </template>
