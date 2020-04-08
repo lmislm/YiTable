@@ -23,7 +23,7 @@
         <div slot="name">名字搜索</div>
         <table-column type="index" width="55" label="序号" sortable></table-column>
         <table-column type="selection" width="55"></table-column>
-        <table-column prop="name" label="名字" width="100"></table-column>
+        <table-column prop="name" label="名字" width="100" :selectable="handleSelectable"></table-column>
         <table-column prop="nickName" label="小名" sortable></table-column>
         <table-column prop="age" label="年龄" data-type="numeric" sortable></table-column>
         <table-column prop="birthday" label="生日" sortable></table-column>
@@ -86,6 +86,13 @@ export default {
     },
     switchFilter () {
       this.filterable = !this.filterable
+    },
+    handleSelectable (row, index) {
+      if (index !== 3) {
+        return false
+      } else {
+        return true
+      }
     }
   }
 }
