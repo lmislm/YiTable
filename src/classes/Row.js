@@ -13,13 +13,16 @@ export default class Row {
     return this.columns.find(column => column.prop === columnName)
   }
   getSortableValue(columnName) {
-    const dataType = this.getColumn(columnName).dataType
+    const { dataType, type } = this.getColumn(columnName)
     let value = this.getValue(columnName)
     if (value === undefined || value === null) {
       return ''
     }
     if (value instanceof String) {
       value = value.toLowerCase()
+    }
+    if (type === 'index') {
+      return this.index
     }
     if (dataType === 'numeric') {
       return value
