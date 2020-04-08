@@ -35,7 +35,8 @@ export default class Column {
     const sortFieldName = this.getSortFieldName()    
     const sortColumn = allColumns.find(column => column.prop === sortFieldName)
     const dataType = sortColumn.dataType
-    if (dataType.startsWith('date') || dataType === 'numeric') {
+    const type = sortColumn.type
+    if (dataType.startsWith('date') || dataType === 'numeric' || type === 'index') {
       return (row1, row2) => {
         const value1 = row1.getSortableValue(sortFieldName)
         const value2 = row2.getSortableValue(sortFieldName)
