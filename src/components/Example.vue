@@ -22,7 +22,7 @@
       ]"
       >
         <!-- <div slot="nickName">名字搜索</div> -->
-        <table-column type="index" width="55" sortable></table-column>
+        <table-column type="index" width="55" label="序号" sortable></table-column>
         <table-column prop="name" label="名字" width="100"></table-column>
         <table-column prop="nickName" label="小名" sortable></table-column>
         <table-column prop="age" label="年龄" data-type="numeric" sortable></table-column>
