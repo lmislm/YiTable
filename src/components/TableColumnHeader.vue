@@ -7,7 +7,10 @@
     :aria-disabled="ariaDisabled"
     @click="clicked"
   >
-    <span class="cell">{{ isTypeIndex ? (label || '#') : label }}</span>
+    <span class="cell" v-if="!isTypeSelection">{{ isTypeIndex ? (label || '#') : label }}</span>
+    <span class="cell" v-else>
+      <slot name="selection"/>
+    </span>
   </th>
 </template>
 
@@ -61,6 +64,9 @@ export default {
     },
     isTypeIndex () {
       return this.column.type && this.column.type === 'index'
+    },
+    isTypeSelection () {
+      return this.column.type && this.column.type === 'selection'
     }
   },
   methods: {

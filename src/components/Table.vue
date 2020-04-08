@@ -5,26 +5,25 @@
         <slot name="before-header" :columns="columns" />
         <thead :class="tableHeadClass">
           <tr>
-            <!-- selectale抽离成组件？ -->
-            <th v-if="selectable" style="width:55px;text-align: center;">
-              <input
-                type="checkbox"
-                v-model="isAllSelected"
-                :indeterminate.prop="allSelectedIndeterminate"
-              />
-            </th>
             <table-column-header
               v-for="column in columns"
               :key="column.prop"
               :sort="sort"
               :column="column"
               @click="changeSorting"
-            />
+            >
+              <input
+                slot="selection"
+                type="checkbox"
+                v-model="isAllSelected"
+                :indeterminate.prop="allSelectedIndeterminate"
+              />
+            </table-column-header>
           </tr>
           <!-- 这里的slot顺序有问题，应该要把input:checkbox写到table-column-header组件里面 -->
           <tr v-show="filterable">
             <th v-for="column in columns" :key="column.prop">
-              <slot :name="column.prop"/>
+              <slot :name="column.prop" />
             </th>
           </tr>
         </thead>
@@ -36,7 +35,6 @@
               :index="index"
               :class="[index%2 == 1 ? 'even' : 'odd']"
               :columns="columns"
-              :selectable="selectable"
               @rowClick="emitRowClick"
               @rowSelect="emitRowSelectClick"
             />
@@ -98,10 +96,6 @@ export default {
     sortOrder: {
       type: String,
       default: ''
-    },
-    selectable: {
-      type: Boolean,
-      default: false
     },
     filterable: Boolean,
     emptyText: {

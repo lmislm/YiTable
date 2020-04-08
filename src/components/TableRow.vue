@@ -1,15 +1,14 @@
 <template>
   <tr @click="$emit('rowClick', row)">
-    <td v-if="selectable" style="width:55px;text-align: center;">
-      <input type="checkbox" @click.stop="onCheckboxClick" :checked="row.isSelected" />
-    </td>
     <cell
       v-for="column in visibleColumns"
       :key="column.id"
       :row="row"
       :index="index"
       :column="column"
-    />
+    >
+      <input v-if="column.type === 'selection'" type="checkbox" @click.stop="onCheckboxClick" :checked="row.isSelected" />
+    </cell>
   </tr>
 </template>
 
@@ -28,10 +27,6 @@ export default {
     row: {
       type: Object,
       required: true
-    },
-    selectable: {
-      type: Boolean,
-      default: false
     },
     index: Number
   },

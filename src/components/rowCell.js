@@ -1,7 +1,7 @@
 export default {
   functional: true,
   props: ['column', 'row', 'index'],
-  render(createElement, { props }) {
+  render (createElement, { props, children }) {
     const data = {}
     if (props.column.cellClass) {
       data.class = props.column.cellClass
@@ -34,13 +34,20 @@ export default {
       )
     }
     const isColumnIndex = props.column.type && props.column.type === 'index'
+    const isColumnSelection = props.column.type && props.column.type === 'selection'
     return createElement('td', data, [
       createElement(
         'span',
         { class: 'cell' },
         // 真实id还是实时的index, 真实id:props.index,实时index:props.row.index
         // isColumnIndex ? props.index + 1 : props.row.getValue(props.column.prop)
-        isColumnIndex ? props.row.index + 1 : props.row.getValue(props.column.prop)
+        [
+          isColumnIndex
+            ? props.row.index + 1
+            : isColumnSelection
+              ? children
+              : props.row.getValue(props.column.prop),
+        ]
       )
     ])
   }
