@@ -175,6 +175,14 @@ export default {
   },
   watch: {
     data () {
+      console.log('---')
+      if (this.usesLocalData) {
+        this.mapDataToRows()
+        this.clearSelection()
+      }
+    },
+    showRows () {
+      console.log('===')
       if (this.usesLocalData) {
         this.mapDataToRows()
         this.clearSelection()
