@@ -437,7 +437,7 @@ $align: center;
   }
   tr {
     background-color: $--color-white;
-    input[type='checkbox'] {
+    input[type="checkbox"] {
       margin: 0;
     }
     // &:nth-child(even) {

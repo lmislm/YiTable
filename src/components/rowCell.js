@@ -60,7 +60,6 @@ export default {
     const isColumnSelection = columnType && columnType === 'selection'
     // 序号列是否用的是实时的index
     const isRealColumnIndex = true // options
-    console.log(children, 'children')
     return createElement('td', data, [
       createElement(
         'span',
