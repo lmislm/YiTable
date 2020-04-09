@@ -34,7 +34,6 @@
               :index="index"
               :class="[index%2 == 1 ? 'even' : 'odd']"
               :columns="columns"
-              @rowClick="emitRowClick"
               @rowSelect="emitRowSelectClick"
             />
             <slot name="after-row" :index="index" :row="row.data" :columns="columns" />
@@ -240,9 +239,6 @@ export default {
     },
     getColumn (columnName) {
       return this.columns.find((column) => column.prop === columnName)
-    },
-    emitRowClick (row) {
-      this.$emit('row-click', row)
     },
     emitRowSelectClick (options) {
       const selectRows = this.displayedRows.filter(row => !!row.isSelected && !!row.isSelectable)
