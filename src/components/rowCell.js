@@ -45,10 +45,14 @@ export default {
       )
     }
     if (props.column.selectable.name !== '_default') {
-      const canSelect = props.column.selectable(props.row.data, props.row.index)
-      // 注意：先赋值给isSelectable，然后再确定是否被选中
+      let canSelect = props.column.selectable(props.row.data, props.row.index)
+      if (canSelect === 'undefined') {
+        canSelect = true
+      }
       props.row.isSelectable = canSelect
-      props.row.isSelected = canSelect ? props.row.isSelected : false
+      if (!canSelect) {
+        props.row.isSelected = false
+      }
     }
     // 表格列类型
     const columnType = props.column.type

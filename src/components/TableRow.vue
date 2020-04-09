@@ -1,8 +1,8 @@
 <template>
   <tr @click="$emit('rowClick', row)">
     <cell
-      v-for="column in visibleColumns"
-      :key="column.id"
+      v-for="(column, i) in visibleColumns"
+      :key="i"
       :row="row"
       :index="index"
       :column="column"
@@ -52,9 +52,6 @@ export default {
         selected: !!row.isSelected
       })
     }
-  },
-  created () {
-    this.$set(this.row, 'isSelectable', !this.row.selectable)
   }
 }
 </script>

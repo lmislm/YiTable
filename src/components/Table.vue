@@ -20,8 +20,7 @@
               />
             </table-column-header>
           </tr>
-          <!-- 这里的slot顺序有问题，应该要把input:checkbox写到table-column-header组件里面 -->
-          <tr v-show="filterable">
+          <tr v-show="showFilter">
             <th v-for="column in columns" :key="column.prop">
               <slot :name="column.prop" />
             </th>
@@ -30,7 +29,7 @@
         <tbody :class="tableBodyClass">
           <template v-for="(row, index) in displayedRows">
             <table-row
-              :key="row.index"
+              :key="index"
               :row="row"
               :index="index"
               :class="[index%2 == 1 ? 'even' : 'odd']"
@@ -97,7 +96,7 @@ export default {
       type: String,
       default: ''
     },
-    filterable: Boolean,
+    showFilter: Boolean,
     emptyText: {
       type: String,
       default: ''
@@ -115,7 +114,8 @@ export default {
       default: () => ''
     },
     stripe: Boolean,
-    border: Boolean
+    border: Boolean,
+    maxHeight: [String, Number]
   },
 
   data: () => ({
@@ -154,10 +154,13 @@ export default {
       return Array.isArray(this.data)
     },
     displayedRows () {
-      if (!this.usesLocalData) {
-        return this.sortedRows
+      const isSelectable = this.hasTypeSelection(this.sortedRows)
+      if (isSelectable) {
+        this.sortedRows.forEach(row => {
+          this.$set(row, 'isSelectable', true)
+        })
       }
-      if (!this.showFilter) {
+      if (!this.usesLocalData) {
         return this.sortedRows
       }
       if (!this.columns.filter(column => column.isFilterable()).length) {
@@ -330,6 +333,10 @@ export default {
         delete newRow[prop]
         return newRow
       })
+    },
+    hasTypeSelection (columns) {
+      const selections = columns.map(col => col.type === 'selection')
+      return selections.length !== 0
     }
   }
 }
