@@ -29,20 +29,4 @@ export default class Row {
     }
     return value.toString()
   }
-  // 是否可以过滤
-  getFilterableValue(columnName) {
-    const value = this.getValue(columnName)
-    if (!value) {
-      return ''
-    }
-    return value.toString().toLowerCase()
-  }
-  passesFilter(filter) {
-    return this.columns
-      .filter(column => column.isFilterable())
-      .map(column => this.getFilterableValue(column.getFilterFieldName()))
-      .filter(
-        filterableValue => filterableValue.indexOf(filter.toLowerCase()) >= 0
-      ).length
-  }
 }

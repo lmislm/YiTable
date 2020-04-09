@@ -47,17 +47,6 @@
     <div v-if="displayedRows.length === 0 && !emptyText" class="yi-table__empty">
       <slot />
     </div>
-    <template v-if="pagination && count">
-      <slot name="pagination" :pagination="{ count, pageChange, paginationEllipsisClick }">
-        <table-pagination
-          :current-page="pagination.currentPage"
-          :per-page="pagination.perPage"
-          :count="count"
-          @pageChange="pageChange"
-          @ellipsisClick="paginationEllipsisClick"
-        />
-      </slot>
-    </template>
   </div>
 </template>
 
@@ -66,23 +55,17 @@ import Column from '../classes/Column'
 import Row from '../classes/Row'
 import TableColumnHeader from './TableColumnHeader'
 import TableRow from './TableRow'
-import TablePagination from './TablePagination'
 import { classList, toggleRowStatus } from '../utils'
 
 export default {
   components: {
     TableColumnHeader,
-    TableRow,
-    TablePagination
+    TableRow
   },
   props: {
     data: {
       type: [Array, Function],
       default: () => []
-    },
-    pagination: {
-      type: Object,
-      default: undefined
     },
     showCaption: {
       type: Boolean,
@@ -163,13 +146,7 @@ export default {
       if (!this.usesLocalData) {
         return this.sortedRows
       }
-      if (!this.isFilter) { // Todo: 自带的筛选条件触发
-        return this.sortedRows
-      }
-      if (!this.columns.filter(column => column.isFilterable()).length) {
-        return this.sortedRows
-      }
-      return this.sortedRows.filter(row => row.passesFilter(this.filter))
+      return this.sortedRows
     },
     sortedRows () {
       if (!this.usesLocalData) {
@@ -235,17 +212,13 @@ export default {
     cloneArray (arrayToCopy) {
       return arrayToCopy.slice(0)
     },
-    async pageChange (page) {
-      this.pagination.currentPage = page
+    async pageChange () {
       await this.mapDataToRows()
     },
     async mapDataToRows () {
       const data = this.prepareLocalData()
       this.rows = data.map((rowData, rowIndex) => new Row(rowData, this.columns, rowIndex))
       this.$emit('data-change')
-    },
-    paginationEllipsisClick (event) {
-      this.$emit('paginationEllipsisClick', event)
     },
     prepareLocalData () {
       this.count = this.data.length

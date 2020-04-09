@@ -2,7 +2,6 @@ import Vue from 'vue'
 
 import YiTable from './components/Table'
 import YiColumn from './components/TableColumn'
-import YiPagination from './components/TablePagination';
 
 import ColumnMixin from './components/column-mixin'
 
@@ -14,4 +13,4 @@ if (process.env.NODE_ENV !== 'production') {
   }).$mount('#app')
 }
 
-export { YiTable, YiColumn, YiPagination, ColumnMixin }
+export { YiTable, YiColumn, ColumnMixin }
