@@ -269,7 +269,7 @@ export default {
       this.$emit('row-click', row)
     },
     emitRowSelectClick (options) {
-      const selectRows = this.displayedRows.filter(row => !!row.isSelected)
+      const selectRows = this.displayedRows.filter(row => !!row.isSelected && !!row.isSelectable)
       const selection = (this.deleteProp(selectRows, 'isSelected') || [])
         .map(row => row.data)
       // 累计所有选中的数据的data，推入一个数组
