@@ -3,6 +3,7 @@
     <div class="table">
       <Table
         :showFilter="showFilte"
+        :showRows="currentColumns"
         border
         stripe
         ref="yitable"
@@ -12,11 +13,11 @@
         <div slot="name">名字搜索</div>
         <table-column type="index" width="55" label="序号" sortable></table-column>
         <table-column type="selection" width="55" :selectable="handleSelectable"></table-column>
-        <table-column prop="name" label="名字" width="100"></table-column>
+        <table-column prop="name" label="名字" width="100" :hidden="isHiddenName"></table-column>
         <table-column prop="nickName" label="小名" sortable></table-column>
         <table-column prop="age" label="年龄" data-type="numeric" sortable></table-column>
         <table-column prop="birthday" label="生日" sortable></table-column>
-        <table-column label="操作" :filterable="false">
+        <table-column label="操作" prop="operate" :filterable="false">
           <template slot-scope="scope">{{scope.row.name}}</template>
         </table-column>
         <!-- <column-example prop="b" /> -->
@@ -41,6 +42,13 @@
         <button @click="deleteData" :disabled="isOriginalData">删除数据</button>
         <button @click="copyData" :disabled="isOriginalData">展示数据</button>
       </div>
+      <div class="opt">
+        <div class="title">列表隐藏操作：</div>
+        <button @click="deleteHiddenData">隐藏某列</button>
+        <button @click="recoveryData">列表还原</button>
+        <div>当前列：{{currentColumns}}</div>
+        <div>原有列：{{mockHiddenData}}</div>
+      </div>
     </div>
   </div>
 </template>
@@ -59,9 +67,12 @@ export default {
     return {
       showFilte: false,
       isOriginalData: true,
+      isHiddenName: false,
       maxHeight: '',
       selectionRows: [],
       dataList: [],
+      mockHiddenData: ['name', 'nickName', 'age', 'birthday', 'operate'],
+      currentColumns: [],
       mockData: [
         { name: '张三，法外狂徒张三', nickName: '三三', age: '23', birthday: '1993' },
         { name: '李四', nickName: '四四', age: '32', birthday: '1992' },
@@ -84,7 +95,7 @@ export default {
         'formatter：它用于格式化指定列的值，接受一个Function，会传入两个参数：row和column；',
         '-----',
         'table：data、sortBy、sortOrder、emptyText、tableClass、theadClass、tbodyClass、show-header',
-        'table-column: prop、label、hidden、sortable、dataType、cellClass、headerClass、formatter、sortBy、width、min-width',
+        'table-column：prop、label、hidden、sortable、dataType、cellClass、headerClass、formatter、sortBy、width、min-width',
         'toggleRowSelection、clearSelection'
       ]
     }
@@ -101,6 +112,12 @@ export default {
     copyData () {
       this.dataList = this.mockData
     },
+    deleteHiddenData () {
+      this.currentColumns = this.mockHiddenData.slice(0, 2)
+    },
+    recoveryData () {
+      this.currentColumns = this.mockHiddenData
+    },
     switchFilter () {
       this.showFilte = !this.showFilte
     },
@@ -110,6 +127,10 @@ export default {
       } else {
         return true
       }
+    },
+    switchShowColumn () {
+      this.isHiddenName = !this.isHiddenName
+      console.log(this.isHiddenName)
     }
   }
 }
