@@ -3,7 +3,7 @@
     <div class="yi-table__table-wrapper">
       <table :class="fullTableClass" border="0" cellspacing="0" cellpadding="0">
         <slot name="before-header" :columns="columns" />
-        <thead :class="tableHeadClass">
+        <thead :class="tableHeadClass" v-if="showHeader">
           <tr>
             <table-column-header
               v-for="column in columns"
@@ -97,7 +97,12 @@ export default {
     },
     stripe: Boolean,
     border: Boolean,
-    maxHeight: [String, Number]
+    maxHeight: [String, Number],
+    showHeader: {
+      type: Boolean,
+      default: true
+    },
+    showRows: Array
   },
 
   data: () => ({

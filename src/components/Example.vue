@@ -83,7 +83,7 @@ export default {
         'prop：对应列内容的字段名，也可以使用 property 属性；',
         'formatter：它用于格式化指定列的值，接受一个Function，会传入两个参数：row和column；',
         '-----',
-        'table：data、sortBy、sortOrder、emptyText、tableClass、theadClass、tbodyClass',
+        'table：data、sortBy、sortOrder、emptyText、tableClass、theadClass、tbodyClass、show-header',
         'table-column: prop、label、hidden、sortable、dataType、cellClass、headerClass、formatter、sortBy、width、min-width',
         'toggleRowSelection、clearSelection'
       ]
