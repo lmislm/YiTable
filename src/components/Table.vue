@@ -193,6 +193,7 @@ export default {
     data () {
       if (this.usesLocalData) {
         this.mapDataToRows()
+        this.clearSelection()
       }
     },
     isAllSelected (v) {
