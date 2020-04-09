@@ -163,6 +163,9 @@ export default {
       if (!this.usesLocalData) {
         return this.sortedRows
       }
+      if (!this.isFilter) { // Todo: 自带的筛选条件触发
+        return this.sortedRows
+      }
       if (!this.columns.filter(column => column.isFilterable()).length) {
         return this.sortedRows
       }
