@@ -2,28 +2,17 @@
   <div class="example">
     <div class="table">
       <Table
+        :showFilter="showFilte"
         border
         stripe
+        ref="yitable"
         @selection-change="handleSelection"
-        :filterable="filterable"
-        :data="[
-        { name: '张三，法外狂徒张三', nickName: '三三', age: '23', birthday: '1993' },
-        { name: '李四', nickName: '四四', age: '32', birthday: '1992' },
-        { name: '王五', nickName: '五五', age: '12', birthday: '1998' },
-        { name: '赵六', nickName: '六六', age: '15', birthday: '1990' },
-        { name: '七', nickName: '七七', age: '27', birthday: '2003' },
-        { name: '八', nickName: '八八', age: '82', birthday: '2001' },
-        { name: '九', nickName: '九九', age: '29', birthday: '2008' },
-        { name: '十', nickName: '十十', age: '10', birthday: '2010' },
-        { name: '十二', nickName: '十二十二', age: '1212', birthday: '91' },
-        { name: '十三', nickName: '十五十五', age: '-1', birthday: '2118' },
-        { name: '十四', nickName: '十', age: '-4', birthday: '2118' }
-      ]"
+        :data="isOriginalData ? mockData : dataList"
       >
         <div slot="name">名字搜索</div>
         <table-column type="index" width="55" label="序号" sortable></table-column>
-        <table-column type="selection" width="55"></table-column>
-        <table-column prop="name" label="名字" width="100" :selectable="handleSelectable"></table-column>
+        <table-column type="selection" width="55" :selectable="handleSelectable"></table-column>
+        <table-column prop="name" label="名字" width="100"></table-column>
         <table-column prop="nickName" label="小名" sortable></table-column>
         <table-column prop="age" label="年龄" data-type="numeric" sortable></table-column>
         <table-column prop="birthday" label="生日" sortable></table-column>
@@ -35,16 +24,22 @@
     </div>
     <div class="info">
       <div class="desc">
-        <span class="title">属性说明：</span>
+        <div class="title">属性说明：</div>
         <div class="row" v-for="(item, index) in exampleData" :key="index">{{item}}</div>
       </div>
       <div class="selection">
-        <span class="title">选中行Selection：</span>
+        <div class="title">选中行Selection：</div>
         {{ selectionRows }}
       </div>
       <div class="opt">
-        <span class="title">操作：</span>
+        <div class="title">操作：</div>
         <button @click="switchFilter">展示过滤</button>
+      </div>
+      <div class="opt">
+        <div class="title">数据操作：</div>
+        <input type="checkbox" v-model="isOriginalData">
+        <button @click="deleteData" :disabled="isOriginalData">删除数据</button>
+        <button @click="copyData" :disabled="isOriginalData">展示数据</button>
       </div>
     </div>
   </div>
@@ -62,8 +57,24 @@ export default {
   },
   data () {
     return {
-      filterable: false,
+      showFilte: false,
+      isOriginalData: true,
+      maxHeight: '',
       selectionRows: [],
+      dataList: [],
+      mockData: [
+        { name: '张三，法外狂徒张三', nickName: '三三', age: '23', birthday: '1993' },
+        { name: '李四', nickName: '四四', age: '32', birthday: '1992' },
+        { name: '王五', nickName: '五五', age: '12', birthday: '1998' },
+        { name: '赵六', nickName: '六六', age: '15', birthday: '1990' },
+        { name: '七', nickName: '七七', age: '27', birthday: '2003' },
+        { name: '八', nickName: '八八', age: '82', birthday: '2001' },
+        { name: '九', nickName: '九九', age: '29', birthday: '2008' },
+        { name: '十', nickName: '十十', age: '10', birthday: '2010' },
+        { name: '十二', nickName: '十二十二', age: '1212', birthday: '91' },
+        { name: '十三', nickName: '十五十五', age: '-1', birthday: '2118' },
+        { name: '十四', nickName: '十', age: '-4', birthday: '2118' }
+      ],
       exampleData: [
         'data：显示的数据；',
         'label：显示的标题；',
@@ -84,11 +95,17 @@ export default {
       // this.selectionRows = selection
       console.log(selection, 'example')
     },
+    deleteData () {
+      this.dataList = this.mockData.slice(0, 4)
+    },
+    copyData () {
+      this.dataList = this.mockData
+    },
     switchFilter () {
-      this.filterable = !this.filterable
+      this.showFilte = !this.showFilte
     },
     handleSelectable (row, index) {
-      if (index !== 3) {
+      if (index === 3) {
         return false
       } else {
         return true
@@ -105,5 +122,7 @@ export default {
 .title {
   font-size: 18px;
   font-weight: 800;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 </style>
