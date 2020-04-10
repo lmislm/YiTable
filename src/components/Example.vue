@@ -44,7 +44,7 @@
       </div>
       <div class="opt">
         <div class="title">列表隐藏操作：</div>
-        <button @click="deleteHiddenData">隐藏某列</button>
+        <button @click="deleteHiddenData">显示某列</button>
         <button @click="recoveryData">列表还原</button>
         <div>当前列：{{currentColumns}}</div>
         <div>原有列：{{mockHiddenData}}</div>
@@ -94,7 +94,7 @@ export default {
         'prop：对应列内容的字段名，也可以使用 property 属性；',
         'formatter：它用于格式化指定列的值，接受一个Function，会传入两个参数：row和column；',
         '-----',
-        'table：data、sortBy、sortOrder、emptyText、tableClass、theadClass、tbodyClass、show-header',
+        'table：data、sortBy、sortOrder、emptyText、tableClass、theadClass、tbodyClass、show-header、showRows（Array）',
         'table-column：prop、label、hidden、sortable、dataType、cellClass、headerClass、formatter、sortBy、width、min-width',
         'toggleRowSelection、clearSelection'
       ]
@@ -113,7 +113,7 @@ export default {
       this.dataList = this.mockData
     },
     deleteHiddenData () {
-      this.currentColumns = this.mockHiddenData.slice(0, 2)
+      this.currentColumns = this.mockHiddenData.slice(0, 3)
     },
     recoveryData () {
       this.currentColumns = this.mockHiddenData
