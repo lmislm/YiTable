@@ -29,9 +29,6 @@ export default class Column {
       this.component = columnComponent
     }
   }
-  isSortable() {
-    return this.sortable
-  }
   getSortPredicate(sortOrder, allColumns) {
     const sortFieldName = this.getSortFieldName()    
     const sortColumn = allColumns.find(column => column.prop === sortFieldName)

@@ -30,13 +30,13 @@ export default {
   },
   computed: {
     ariaDisabled () {
-      if (!this.column.isSortable()) {
+      if (!this.column.sortable) {
         return 'true'
       }
       return false
     },
     ariaSort () {
-      if (!this.column.isSortable()) {
+      if (!this.column.sortable) {
         return false
       }
       if (this.column.prop !== this.sort.fieldName) {
@@ -45,7 +45,7 @@ export default {
       return this.sort.order === 'asc' ? 'ascending' : 'descending'
     },
     headerClass () {
-      if (!this.column.isSortable()) {
+      if (!this.column.sortable) {
         return classList('yi-table__th', this.column.headerClass)
       }
       if (this.column.prop !== this.sort.fieldName) {
