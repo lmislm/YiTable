@@ -71,7 +71,7 @@ export default {
   },
   methods: {
     clicked () {
-      if (this.column.isSortable()) {
+      if (this.column.sortable) {
         this.$emit('click', this.column)
       }
     }
