@@ -131,13 +131,6 @@ export default {
     tableBodyClass () {
       return classList('yi-table__body', this.tbodyClass)
     },
-    ariaCaption () {
-      if (this.sort.fieldName === '') {
-        return 'Table not sorted'
-      }
-      return `Table sorted by ${this.sort.fieldName} ${
-        this.sort.order === 'asc' ? '(ascending)' : '(descending)'}`
-    },
     usesLocalData () { // TODO: cache缓存
       return Array.isArray(this.data)
     },
