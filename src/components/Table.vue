@@ -55,6 +55,7 @@ import Row from '../classes/Row'
 import TableColumnHeader from './TableColumnHeader'
 import TableRow from './TableRow'
 import { classList, toggleRowStatus } from '../utils'
+import cloneDeep from 'lodash.clonedeep'
 
 export default {
   components: {
@@ -181,11 +182,12 @@ export default {
         this.clearSelection()
       }
     },
-    showRows () {
-      console.log('===')
+    showRows (v) {
       if (this.usesLocalData) {
-        this.mapDataToRows()
-        this.clearSelection()
+        const copyColumns = cloneDeep(this.columns)
+        this.columns = copyColumns.map(col => {
+          return { ...col, hidden: col.prop !== undefined && !~v.indexOf(col.prop) }
+        })
       }
     },
     isAllSelected (v) {
