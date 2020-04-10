@@ -15,7 +15,8 @@ export default class Column {
       'cellClass',
       'width',
       'minWidth',
-      'headerClass'
+      'headerClass',
+      'align'
     ])
     for (const property in properties) {
       if (Object.prototype.hasOwnProperty.call(properties, property)) {

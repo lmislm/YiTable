@@ -11,6 +11,9 @@ export default {
         width: parseInt(props.column.width) + 'px'
       }
     }
+    if (props.column.align) {
+      data.class = `is-${props.column.align}`
+    }
     if (props.column.minWidth) {
       data.style = {
         'min-width': parseInt(props.column.minWidth) + 'px'

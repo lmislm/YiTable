@@ -103,6 +103,10 @@ export default {
       type: Boolean,
       default: true
     },
+    align: {
+      type: String,
+      default: 'center'
+    },
     showRows: Array
   },
 
@@ -135,6 +139,7 @@ export default {
       return Array.isArray(this.data)
     },
     displayedRows () {
+      console.log(this.sortedRows, 'displayedRows')
       const isSelectable = this.hasTypeSelection(this.sortedRows)
       if (isSelectable) {
         this.sortedRows.forEach(row => {
@@ -379,13 +384,14 @@ $align: center;
       }
     }
   }
-  .el-table__body td {
-    transition: background-color 0.25s ease;
+  .yi-table__body {
+    tr:hover > td {
+      background-color: $--table-row-hover-background-color;
+    }
+    td {
+      transition: background-color 0.25s ease;
+    }
   }
-  .yi-table__body tr:hover > td {
-    background-color: $--table-row-hover-background-color;
-  }
-
   th,
   td {
     border-bottom: $--table-border;
@@ -416,17 +422,23 @@ $align: center;
     padding-right: 10px;
   }
   tr {
+    border-bottom: $--table-border;
     background-color: $--color-white;
-    input[type="checkbox"] {
+    input[type='checkbox'] {
       margin: 0;
+    }
+    .is-center {
+      text-align: center;
+    }
+    .is-left {
+      text-align: left;
+    }
+    .is-right {
+      text-align: right;
     }
     // &:nth-child(even) {
     //   background-color: #ebeef5;
     // }
-  }
-  tr {
-    // border-bottom: 1px solid red;
-    border-bottom: $--table-border;
   }
 }
 </style>

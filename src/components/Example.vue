@@ -1,6 +1,6 @@
 <template>
   <div class="example">
-    <div class="table">
+    <div class="item table">
       <Table
         :showFilter="showFilte"
         :showRows="currentColumns"
@@ -17,13 +17,13 @@
         <table-column prop="nickName" label="小名" sortable></table-column>
         <table-column prop="age" label="年龄" data-type="numeric" sortable></table-column>
         <table-column prop="birthday" label="生日" sortable></table-column>
-        <table-column label="操作" prop="operate" :filterable="false">
+        <table-column label="操作" prop="operate" :filterable="false" align="left" cellClass="cell-test">
           <template slot-scope="scope">{{scope.row.name}}</template>
         </table-column>
         <!-- <column-example prop="b" /> -->
       </Table>
     </div>
-    <div class="info">
+    <div class="item info">
       <div class="desc">
         <div class="title">属性说明：</div>
         <div class="row" v-for="(item, index) in exampleData" :key="index">{{item}}</div>
@@ -93,6 +93,7 @@ export default {
         'dataType：（numeric/date）sortable为true时，numberic和date值根据数值大小排序',
         'prop：对应列内容的字段名，也可以使用 property 属性；',
         'formatter：它用于格式化指定列的值，接受一个Function，会传入两个参数：row和column；',
+        'showRows：待展示的列，接受每一列的prop，无prop则默认显示',
         '-----',
         'table：data、sortBy、sortOrder、emptyText、tableClass、theadClass、tbodyClass、show-header、showRows（Array）',
         'table-column：prop、label、hidden、sortable、dataType、cellClass、headerClass、formatter、sortBy、width、min-width',
@@ -135,10 +136,13 @@ export default {
   }
 }
 </script>
-<style>
+<style lang="scss">
 .example {
   display: flex;
   flex-direction: row;
+  .item {
+    flex: 1;
+  }
 }
 .title {
   font-size: 18px;

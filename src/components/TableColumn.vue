@@ -46,6 +46,10 @@ export default {
       type: Boolean,
       default: false
     },
+    align: {
+      type: String,
+      default: 'center'
+    },
     selectable: {
       type: Function,
       default: (v) => v
