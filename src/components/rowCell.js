@@ -12,7 +12,7 @@ export default {
       }
     }
     if (props.column.align) {
-      data.class = `is-${props.column.align}`
+      // data.class = Object.assign(data.class, `is-${props.column.align}`)
     }
     if (props.column.minWidth) {
       data.style = {
