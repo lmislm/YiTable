@@ -1,15 +1,20 @@
 <template>
-  <tr @click="$emit('rowClick', row)">
-    <td v-if="selectable" style="width:55px;text-align: center;">
-      <input type="checkbox" @click.stop="onCheckboxClick" :checked="row.isSelected" />
-    </td>
+  <tr @click="$emit('row-click', row)">
     <cell
-      v-for="column in visibleColumns"
-      :key="column.id"
+      v-for="(column, i) in visibleColumns"
+      :key="i"
       :row="row"
       :index="index"
       :column="column"
-    />
+    >
+      <input
+        v-if="column.type === 'selection'"
+        type="checkbox"
+        @click.stop="onCheckboxClick"
+        :checked="row.isSelected"
+        :disabled="!row.isSelectable"
+      />
+    </cell>
   </tr>
 </template>
 
@@ -28,10 +33,6 @@ export default {
     row: {
       type: Object,
       required: true
-    },
-    selectable: {
-      type: Boolean,
-      default: false
     },
     index: Number
   },

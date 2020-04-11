@@ -1,38 +1,39 @@
 <template>
   <div class="yi-table">
     <div class="yi-table__table-wrapper">
-      <table :class="fullTableClass" border="0" cellspacing="0" cellpadding="0">
-        <thead :class="tableHeadClass">
-          <slot name="before-header" :columns="columns" />
+      <table :class="[fullTableClass, `is-${align}`]" border="0" cellspacing="0" cellpadding="0">
+        <slot name="before-header" :columns="columns" />
+        <thead :class="tableHeadClass" v-if="showHeader">
           <tr>
-            <!-- selectale抽离成组件？ -->
-            <th v-if="selectable" style="width:55px;text-align: center;">
-              <input
-                type="checkbox"
-                v-model="isAllSelected"
-                :indeterminate.prop="allSelectedIndeterminate"
-              />
-            </th>
             <table-column-header
               v-for="column in columns"
               :key="column.prop"
               :sort="sort"
               :column="column"
               @click="changeSorting"
-            />
+            >
+              <input
+                slot="selection"
+                type="checkbox"
+                v-model="isAllSelected"
+                :indeterminate.prop="allSelectedIndeterminate"
+              />
+            </table-column-header>
           </tr>
-          <slot name="after-header" :columns="columns" />
+          <tr v-show="showFilter">
+            <th v-for="column in columns" :key="column.prop">
+              <slot :name="column.prop" />
+            </th>
+          </tr>
         </thead>
         <tbody :class="tableBodyClass">
           <template v-for="(row, index) in displayedRows">
             <table-row
-              :key="row.index"
+              :key="index"
               :row="row"
               :index="index"
               :class="[index%2 == 1 ? 'even' : 'odd']"
               :columns="columns"
-              :selectable="selectable"
-              @rowClick="emitRowClick"
               @rowSelect="emitRowSelectClick"
             />
             <slot name="after-row" :index="index" :row="row.data" :columns="columns" />
@@ -45,17 +46,6 @@
     <div v-if="displayedRows.length === 0 && !emptyText" class="yi-table__empty">
       <slot />
     </div>
-    <template v-if="pagination && count">
-      <slot name="pagination" :pagination="{ count, pageChange, paginationEllipsisClick }">
-        <table-pagination
-          :current-page="pagination.currentPage"
-          :per-page="pagination.perPage"
-          :count="count"
-          @pageChange="pageChange"
-          @ellipsisClick="paginationEllipsisClick"
-        />
-      </slot>
-    </template>
   </div>
 </template>
 
@@ -64,23 +54,18 @@ import Column from '../classes/Column'
 import Row from '../classes/Row'
 import TableColumnHeader from './TableColumnHeader'
 import TableRow from './TableRow'
-import TablePagination from './TablePagination'
 import { classList, toggleRowStatus } from '../utils'
+import cloneDeep from 'lodash.clonedeep'
 
 export default {
   components: {
     TableColumnHeader,
-    TableRow,
-    TablePagination
+    TableRow
   },
   props: {
     data: {
       type: [Array, Function],
       default: () => []
-    },
-    pagination: {
-      type: Object,
-      default: undefined
     },
     showCaption: {
       type: Boolean,
@@ -94,10 +79,7 @@ export default {
       type: String,
       default: ''
     },
-    selectable: {
-      type: Boolean,
-      default: false
-    },
+    showFilter: Boolean,
     emptyText: {
       type: String,
       default: ''
@@ -115,7 +97,17 @@ export default {
       default: () => ''
     },
     stripe: Boolean,
-    border: Boolean
+    border: Boolean,
+    maxHeight: [String, Number],
+    showHeader: {
+      type: Boolean,
+      default: true
+    },
+    align: {
+      type: String,
+      default: ''
+    },
+    showRows: Array
   },
 
   data: () => ({
@@ -143,27 +135,20 @@ export default {
     tableBodyClass () {
       return classList('yi-table__body', this.tbodyClass)
     },
-    ariaCaption () {
-      if (this.sort.fieldName === '') {
-        return 'Table not sorted'
-      }
-      return `Table sorted by ${this.sort.fieldName} ${
-        this.sort.order === 'asc' ? '(ascending)' : '(descending)'}`
-    },
-    usesLocalData () {
+    usesLocalData () { // TODO: cache缓存
       return Array.isArray(this.data)
     },
     displayedRows () {
+      const isSelectable = this.hasTypeSelection(this.sortedRows)
+      if (isSelectable) {
+        this.sortedRows.forEach(row => {
+          this.$set(row, 'isSelectable', true)
+        })
+      }
       if (!this.usesLocalData) {
         return this.sortedRows
       }
-      if (!this.showFilter) {
-        return this.sortedRows
-      }
-      if (!this.columns.filter(column => column.isFilterable()).length) {
-        return this.sortedRows
-      }
-      return this.sortedRows.filter(row => row.passesFilter(this.filter))
+      return this.sortedRows
     },
     sortedRows () {
       if (!this.usesLocalData) {
@@ -181,7 +166,7 @@ export default {
       }
       // 深拷贝，JSON.parse方法会有函数循环限制
       // slice makes a copy of the array, instead of mutating the orginal
-      const rowsCopy = this.rows.slice(0)
+      const rowsCopy = cloneDeep(this.rows)
       const sorted = rowsCopy.sort(sortColumn.getSortPredicate(this.sort.order, this.columns))
       return sorted
     }
@@ -190,6 +175,15 @@ export default {
     data () {
       if (this.usesLocalData) {
         this.mapDataToRows()
+        this.clearSelection()
+      }
+    },
+    showRows (v) {
+      if (this.usesLocalData) {
+        const copyColumns = cloneDeep(this.columns)
+        this.columns = copyColumns.map(col => {
+          return { ...col, hidden: col.prop !== undefined && !~v.indexOf(col.prop) }
+        })
       }
     },
     isAllSelected (v) {
@@ -225,20 +219,13 @@ export default {
     await this.mapDataToRows()
   },
   methods: {
-    cloneArray (arrayToCopy) {
-      return arrayToCopy.slice(0)
-    },
-    async pageChange (page) {
-      this.pagination.currentPage = page
+    async pageChange () {
       await this.mapDataToRows()
     },
     async mapDataToRows () {
       const data = this.prepareLocalData()
       this.rows = data.map((rowData, rowIndex) => new Row(rowData, this.columns, rowIndex))
       this.$emit('data-change')
-    },
-    paginationEllipsisClick (event) {
-      this.$emit('paginationEllipsisClick', event)
     },
     prepareLocalData () {
       this.count = this.data.length
@@ -261,15 +248,12 @@ export default {
     getColumn (columnName) {
       return this.columns.find((column) => column.prop === columnName)
     },
-    emitRowClick (row) {
-      this.$emit('row-click', row)
-    },
     emitRowSelectClick (options) {
-      const selectRows = this.displayedRows.filter(row => !!row.isSelected)
+      const selectRows = this.displayedRows.filter(row => !!row.isSelected && !!row.isSelectable)
       const selection = (this.deleteProp(selectRows, 'isSelected') || [])
         .map(row => row.data)
       // 累计所有选中的数据的data，推入一个数组
-      this.selection = selection.slice()
+      this.selection = cloneDeep(selection)
       this.setHeaderCheckboxStatus(options)
       this.$emit('selection-change', this.selection)
     },
@@ -331,8 +315,9 @@ export default {
         return newRow
       })
     },
-    emitSelectedRows () {
-
+    hasTypeSelection (columns) {
+      const selections = columns.map(col => col.type === 'selection')
+      return selections.length !== 0
     }
   }
 }
@@ -351,8 +336,6 @@ $--table-border: 1px solid $--table-border-color !default;
 $--table-current-row-background-color: $--color-primary-light-1 !default;
 $--table-row-hover-background-color: $--background-color-base !important;
 
-$align: center;
-
 .yi-table {
   position: relative;
   overflow: hidden;
@@ -370,20 +353,6 @@ $align: center;
     td {
       border-right: $--table-border;
     }
-    // // 表格左边伪 border
-    // &::after {
-    //   top: 0;
-    //   left: 0;
-    //   width: 1px;
-    //   height: 100%;
-    // }
-    // // 表格顶部伪 border
-    // &::before {
-    //   left: 0;
-    //   top: 0;
-    //   width: 100%;
-    //   height: 1px;
-    // }
   }
   .stripe {
     & .yi-table__body {
@@ -394,29 +363,22 @@ $align: center;
       }
     }
   }
-  .el-table__body td {
-    transition: background-color 0.25s ease;
-  }
-  .yi-table__body tr:hover > td {
-    background-color: $--table-row-hover-background-color;
-  }
-
-  th,
-  td {
-    border-bottom: $--table-border;
-    border-bottom-width: 1px;
-  }
-  th,
-  td {
-    // padding: 6px 0; // mini
-    padding: 8px 0; // small
-    // padding: 10px 0; // medium
-    min-width: 0;
-    box-sizing: border-box;
-    text-overflow: ellipsis;
-    vertical-align: middle;
-    position: relative;
-    text-align: $align;
+  .yi-table__table {
+    text-align: center;
+    &.is-left {
+      text-align: left;
+    }
+    &.is-right {
+      text-align: right;
+    }
+    .yi-table__body {
+      tr:hover > td {
+        background-color: $--table-row-hover-background-color;
+      }
+      td {
+        transition: background-color 0.25s ease;
+      }
+    }
   }
   .cell {
     display: inline-block;
@@ -431,17 +393,33 @@ $align: center;
     padding-right: 10px;
   }
   tr {
+    border-bottom: $--table-border;
     background-color: $--color-white;
-    input[type='checkbox'] {
+    input[type="checkbox"] {
       margin: 0;
     }
-    // &:nth-child(even) {
-    //   background-color: #ebeef5;
-    // }
+    .is-center {
+      text-align: center;
+    }
+    .is-left {
+      text-align: left;
+    }
+    .is-right {
+      text-align: right;
+    }
   }
-  tr {
-    // border-bottom: 1px solid red;
+  th,
+  td {
     border-bottom: $--table-border;
+    border-bottom-width: 1px;
+    padding: 8px 0; // small
+    // padding: 6px 0; // mini
+    // padding: 10px 0; // medium
+    min-width: 0;
+    box-sizing: border-box;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+    position: relative;
   }
 }
 </style>

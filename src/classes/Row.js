@@ -13,7 +13,7 @@ export default class Row {
     return this.columns.find(column => column.prop === columnName)
   }
   getSortableValue(columnName) {
-    const dataType = this.getColumn(columnName).dataType
+    const { dataType, type } = this.getColumn(columnName)
     let value = this.getValue(columnName)
     if (value === undefined || value === null) {
       return ''
@@ -21,25 +21,12 @@ export default class Row {
     if (value instanceof String) {
       value = value.toLowerCase()
     }
+    if (type === 'index') {
+      return this.index
+    }
     if (dataType === 'numeric') {
       return value
     }
     return value.toString()
-  }
-  // 是否可以过滤
-  getFilterableValue(columnName) {
-    const value = this.getValue(columnName)
-    if (!value) {
-      return ''
-    }
-    return value.toString().toLowerCase()
-  }
-  passesFilter(filter) {
-    return this.columns
-      .filter(column => column.isFilterable())
-      .map(column => this.getFilterableValue(column.getFilterFieldName()))
-      .filter(
-        filterableValue => filterableValue.indexOf(filter.toLowerCase()) >= 0
-      ).length
   }
 }

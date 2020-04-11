@@ -45,6 +45,14 @@ export default {
     hidden: {
       type: Boolean,
       default: false
+    },
+    align: {
+      type: String,
+      default: ''
+    },
+    selectable: {
+      type: Function,
+      default: (v) => v
     }
   }
 }

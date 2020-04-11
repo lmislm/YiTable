@@ -7,7 +7,10 @@
     :aria-disabled="ariaDisabled"
     @click="clicked"
   >
-    <span class="cell">{{ isTypeIndex ? '#' : label }}</span>
+    <span class="cell" v-if="!isTypeSelection">{{ isTypeIndex ? (label || '#') : label }}</span>
+    <span class="cell" v-else>
+      <slot name="selection"/>
+    </span>
   </th>
 </template>
 
@@ -27,13 +30,13 @@ export default {
   },
   computed: {
     ariaDisabled () {
-      if (!this.column.isSortable()) {
+      if (!this.column.sortable) {
         return 'true'
       }
       return false
     },
     ariaSort () {
-      if (!this.column.isSortable()) {
+      if (!this.column.sortable) {
         return false
       }
       if (this.column.prop !== this.sort.fieldName) {
@@ -42,7 +45,7 @@ export default {
       return this.sort.order === 'asc' ? 'ascending' : 'descending'
     },
     headerClass () {
-      if (!this.column.isSortable()) {
+      if (!this.column.sortable) {
         return classList('yi-table__th', this.column.headerClass)
       }
       if (this.column.prop !== this.sort.fieldName) {
@@ -61,11 +64,14 @@ export default {
     },
     isTypeIndex () {
       return this.column.type && this.column.type === 'index'
+    },
+    isTypeSelection () {
+      return this.column.type && this.column.type === 'selection'
     }
   },
   methods: {
     clicked () {
-      if (this.column.isSortable()) {
+      if (this.column.sortable) {
         this.$emit('click', this.column)
       }
     }
