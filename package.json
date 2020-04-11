@@ -3,11 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "jsnext:main": "src/index.js",
+  "main": "lib/yi-table.umd.min.js",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build src/index.js",
     "lint": "vue-cli-service lint",
-    "main": "lib/yi-table.umd.min.js",
     "lib": "vue-cli-service build --target lib --name yi-table --dest lib src/index.js",
     "start": "npm run serve src/index.js"
   },
