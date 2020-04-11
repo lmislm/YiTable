@@ -105,7 +105,7 @@ export default {
   methods: {
     handleSelection (selection) {
       // 有bug
-      // this.selectionRows = selection
+      this.selectionRows = selection
       console.log(selection, 'example')
     },
     deleteData () {
