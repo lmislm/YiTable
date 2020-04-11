@@ -1,7 +1,7 @@
 <template>
   <div class="yi-table">
     <div class="yi-table__table-wrapper">
-      <table :class="fullTableClass" border="0" cellspacing="0" cellpadding="0">
+      <table :class="[fullTableClass, `is-${align}`]" border="0" cellspacing="0" cellpadding="0">
         <slot name="before-header" :columns="columns" />
         <thead :class="tableHeadClass" v-if="showHeader">
           <tr>
@@ -105,7 +105,7 @@ export default {
     },
     align: {
       type: String,
-      default: 'center'
+      default: ''
     },
     showRows: Array
   },
@@ -341,8 +341,6 @@ $--table-border: 1px solid $--table-border-color !default;
 $--table-current-row-background-color: $--color-primary-light-1 !default;
 $--table-row-hover-background-color: $--background-color-base !important;
 
-$align: center;
-
 .yi-table {
   position: relative;
   overflow: hidden;
@@ -360,20 +358,6 @@ $align: center;
     td {
       border-right: $--table-border;
     }
-    // // 表格左边伪 border
-    // &::after {
-    //   top: 0;
-    //   left: 0;
-    //   width: 1px;
-    //   height: 100%;
-    // }
-    // // 表格顶部伪 border
-    // &::before {
-    //   left: 0;
-    //   top: 0;
-    //   width: 100%;
-    //   height: 1px;
-    // }
   }
   .stripe {
     & .yi-table__body {
@@ -384,30 +368,22 @@ $align: center;
       }
     }
   }
-  .yi-table__body {
-    tr:hover > td {
-      background-color: $--table-row-hover-background-color;
+  .yi-table__table {
+    text-align: center;
+    &.is-left {
+      text-align: left;
     }
-    td {
-      transition: background-color 0.25s ease;
+    &.is-right {
+      text-align: right;
     }
-  }
-  th,
-  td {
-    border-bottom: $--table-border;
-    border-bottom-width: 1px;
-  }
-  th,
-  td {
-    // padding: 6px 0; // mini
-    padding: 8px 0; // small
-    // padding: 10px 0; // medium
-    min-width: 0;
-    box-sizing: border-box;
-    text-overflow: ellipsis;
-    vertical-align: middle;
-    position: relative;
-    text-align: $align;
+    .yi-table__body {
+      tr:hover > td {
+        background-color: $--table-row-hover-background-color;
+      }
+      td {
+        transition: background-color 0.25s ease;
+      }
+    }
   }
   .cell {
     display: inline-block;
@@ -424,7 +400,7 @@ $align: center;
   tr {
     border-bottom: $--table-border;
     background-color: $--color-white;
-    input[type='checkbox'] {
+    input[type="checkbox"] {
       margin: 0;
     }
     .is-center {
@@ -436,9 +412,19 @@ $align: center;
     .is-right {
       text-align: right;
     }
-    // &:nth-child(even) {
-    //   background-color: #ebeef5;
-    // }
+  }
+  th,
+  td {
+    border-bottom: $--table-border;
+    border-bottom-width: 1px;
+    padding: 8px 0; // small
+    // padding: 6px 0; // mini
+    // padding: 10px 0; // medium
+    min-width: 0;
+    box-sizing: border-box;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+    position: relative;
   }
 }
 </style>
