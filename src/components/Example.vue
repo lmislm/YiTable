@@ -144,6 +144,9 @@ export default {
   .item {
     flex: 1;
   }
+  .table {
+    flex: 1;
+  }
 }
 .title {
   font-size: 18px;
