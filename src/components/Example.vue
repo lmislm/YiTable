@@ -6,6 +6,7 @@
         :showRows="currentColumns"
         border
         stripe
+        align="left"
         ref="yitable"
         @selection-change="handleSelection"
         :data="isOriginalData ? mockData : dataList"
@@ -17,7 +18,7 @@
         <table-column prop="nickName" label="小名" sortable></table-column>
         <table-column prop="age" label="年龄" data-type="numeric" sortable></table-column>
         <table-column prop="birthday" label="生日" sortable></table-column>
-        <table-column label="操作" prop="operate" :filterable="false" align="left" cellClass="cell-test">
+        <table-column label="操作" prop="operate" :filterable="false" align="right" cellClass="cell-test">
           <template slot-scope="scope">{{scope.row.name}}</template>
         </table-column>
         <!-- <column-example prop="b" /> -->
