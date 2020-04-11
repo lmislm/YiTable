@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YiTable</title>
+  <script src="https://unpkg.com/vue"></script>
+</head>
+
+<body>
+  <div id="app">
+    <template>
+      <yi-table :data="mockData">
+        <yi-table-column prop="name" label="名字" width="100"></yi-table-column>
+        <yi-table-column prop="nickName" label="小名" sortable></yi-table-column>
+        <yi-table-column prop="nickName" label="年龄" sortable></yi-table-column>
+      </yi-table>
+    </template>
+  </div>
+  <script src="/lib/yi-table.common.js"></script>
+  <script>
+    new Vue({
+      el: '#app',
+      data() {
+        return {
+          mockData: [
+            { name: '张三，法外狂徒张三', nickName: '三三', age: '23' },
+            { name: '李四', nickName: '四四', age: '32' },
+            { name: '王五', nickName: '五五', age: '12' },
+            { name: '赵六', nickName: '六六', age: '15' }
+          ]
+        }
+      }
+    })
+  </script>
+</body>
+
+
+</html>
