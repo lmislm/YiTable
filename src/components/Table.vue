@@ -1,7 +1,7 @@
 <template>
   <div class="yi-table">
     <div class="yi-table__table-wrapper">
-      <table :class="[fullTableClass, `is-${align}`]" border="0" cellspacing="0" cellpadding="0">
+      <table :class="[fullTableClass, align && `is-${align}`]" border="0" cellspacing="0" cellpadding="0">
         <slot name="before-header" :columns="columns" />
         <thead :class="tableHeadClass" v-if="showHeader">
           <tr>
@@ -340,7 +340,6 @@ $--table-row-hover-background-color: $--background-color-base !important;
   position: relative;
   overflow: hidden;
   box-sizing: border-box;
-  flex: 1;
   width: 100%;
   max-width: 100%;
   background-color: $--color-white;
@@ -364,6 +363,7 @@ $--table-row-hover-background-color: $--background-color-base !important;
     }
   }
   .yi-table__table {
+    width: 100%;
     text-align: center;
     &.is-left {
       text-align: left;
