@@ -166,7 +166,7 @@ export default {
       }
       // 深拷贝，JSON.parse方法会有函数循环限制
       // slice makes a copy of the array, instead of mutating the orginal
-      const rowsCopy = this.rows.slice(0)
+      const rowsCopy = cloneDeep(this.rows)
       const sorted = rowsCopy.sort(sortColumn.getSortPredicate(this.sort.order, this.columns))
       return sorted
     }
@@ -253,7 +253,7 @@ export default {
       const selection = (this.deleteProp(selectRows, 'isSelected') || [])
         .map(row => row.data)
       // 累计所有选中的数据的data，推入一个数组
-      this.selection = selection.slice()
+      this.selection = cloneDeep(selection)
       this.setHeaderCheckboxStatus(options)
       this.$emit('selection-change', this.selection)
     },
