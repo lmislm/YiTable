@@ -139,7 +139,6 @@ export default {
       return Array.isArray(this.data)
     },
     displayedRows () {
-      console.log(this.sortedRows, 'displayedRows')
       const isSelectable = this.hasTypeSelection(this.sortedRows)
       if (isSelectable) {
         this.sortedRows.forEach(row => {
@@ -174,7 +173,6 @@ export default {
   },
   watch: {
     data () {
-      console.log('---')
       if (this.usesLocalData) {
         this.mapDataToRows()
         this.clearSelection()
@@ -221,9 +219,6 @@ export default {
     await this.mapDataToRows()
   },
   methods: {
-    cloneArray (arrayToCopy) {
-      return arrayToCopy.slice(0)
-    },
     async pageChange () {
       await this.mapDataToRows()
     },
