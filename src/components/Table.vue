@@ -42,10 +42,10 @@
         <slot name="footer" />
       </table>
     </div>
-    <div v-if="displayedRows.length === 0" class="yi-table__empty yi-table__empty-text">~</div>
-    <!-- <div v-if="displayedRows.length === 0 && emptyText" class="yi-table__empty">
-      <slot />
-    </div> -->
+    <slot/>
+    <div v-if="!displayedRows.length" class="yi-table__empty yi-table__empty-text">
+      <slot name="empty-text">~</slot>
+    </div>
   </div>
 </template>
 
@@ -80,10 +80,6 @@ export default {
       default: ''
     },
     showFilter: Boolean,
-    emptyText: {
-      type: String,
-      default: ''
-    },
     tableClass: {
       type: Function,
       default: () => ''
