@@ -42,10 +42,10 @@
         <slot name="footer" />
       </table>
     </div>
-    <div v-if="displayedRows.length === 0" class="yi-table__empty-text">{{emptyText}}</div>
-    <div v-if="displayedRows.length === 0 && !emptyText" class="yi-table__empty">
+    <div v-if="displayedRows.length === 0" class="yi-table__empty yi-table__empty-text">~</div>
+    <!-- <div v-if="displayedRows.length === 0 && emptyText" class="yi-table__empty">
       <slot />
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -345,6 +345,15 @@ $--table-row-hover-background-color: $--background-color-base !important;
   background-color: $--color-white;
   font-size: 14px;
   color: $--table-font-color;
+  .yi-table__empty {
+    min-height: 60px;
+    display: flex;
+    justify-content: center;
+    border-left: $--table-border;
+    border-right: $--table-border;
+    border-bottom: $--table-border;
+    align-items: center;
+  }
   .border {
     border-left: $--table-border;
     border-top: $--table-border;
