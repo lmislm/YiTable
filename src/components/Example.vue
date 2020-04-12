@@ -96,7 +96,7 @@ export default {
         'formatter：它用于格式化指定列的值，接受一个Function，会传入两个参数：row和column；',
         'showRows：待展示的列，接受每一列的prop，无prop则默认显示',
         '-----',
-        'table：data、sortBy、sortOrder、emptyText、tableClass、theadClass、tbodyClass、show-header、showRows（Array）',
+        'table：data、sortBy、sortOrder、tableClass、theadClass、tbodyClass、show-header、showRows（Array）, slot="empty-text"',
         'table-column：prop、label、hidden、sortable、dataType、cellClass、headerClass、formatter、sortBy、width、min-width',
         'toggleRowSelection、clearSelection'
       ]
