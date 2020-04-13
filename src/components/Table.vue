@@ -104,7 +104,7 @@ export default {
       type: String,
       default: ''
     },
-    highLight: Boolean,
+    highlightCurrentRow: Boolean,
     showRows: Array
   },
 
@@ -144,7 +144,7 @@ export default {
           this.$set(row, 'isSelectable', true)
         })
       }
-      if (this.highLight) {
+      if (this.highlightCurrentRow) {
         this.sortedRows.forEach(row => {
           this.$set(row, 'isHighLight', false)
         })
@@ -323,7 +323,7 @@ export default {
       })
     },
     setCurrentRow (rowData) {
-      if (this.highLight) {
+      if (this.highlightCurrentRow) {
         const rows = this.displayedRows
         const rowsData = rows.map(r => r.data)
         const index = rowsData.indexOf(rowData)
