@@ -350,16 +350,16 @@ export default {
 }
 </script>
 <style lang="scss">
-$--color-white: #ffffff !default;
-$--color-text-regular: #606266 !default;
-$--border-color-lighter: #ebeef5 !default;
+$--color-white: #ffffff;
+$--color-text-regular: #606266;
+$--border-color-lighter: #ebeef5;
 $--color-primary-light-1: #ecf5ff;
-$--background-color-base: #f5f7fa !default;
+$--background-color-base: #f5f7fa;
 
-$--table-border-color: $--border-color-lighter !default;
+$--table-border-color: $--border-color-lighter;
 
 $--table-font-color: $--color-text-regular;
-$--table-border: 1px solid $--table-border-color !default;
+$--table-border: 1px solid $--table-border-color;
 $--table-current-row-background-color: $--color-primary-light-1 !important;
 $--table-row-hover-background-color: $--background-color-base;
 
