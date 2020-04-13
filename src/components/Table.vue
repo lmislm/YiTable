@@ -32,9 +32,10 @@
               :key="index"
               :row="row"
               :index="index"
-              :class="[index%2 == 1 ? 'even' : 'odd']"
+              :class="[index%2 == 1 ? 'even' : 'odd', row.isHighLight ? 'high-light' : '']"
               :columns="columns"
               @rowSelect="emitRowSelectClick"
+              @row-click="rowClick"
             />
             <slot name="after-row" :index="index" :row="row.data" :columns="columns" />
           </template>
@@ -103,12 +104,14 @@ export default {
       type: String,
       default: ''
     },
+    highLight: Boolean,
     showRows: Array
   },
 
   data: () => ({
     columns: [],
     rows: [],
+    currentRow: {},
     sort: {
       fieldName: '',
       order: ''
@@ -139,6 +142,11 @@ export default {
       if (isSelectable) {
         this.sortedRows.forEach(row => {
           this.$set(row, 'isSelectable', true)
+        })
+      }
+      if (this.highLight) {
+        this.sortedRows.forEach(row => {
+          this.$set(row, 'isHighLight', false)
         })
       }
       if (!this.usesLocalData) {
@@ -192,6 +200,10 @@ export default {
         this.allSelectedIndeterminate = false
       }
       this.emitRowSelectClick({ isAll: true })
+    },
+    currentRow (newRowData, oldRowData) {
+      // Todo: 比对新旧
+      this.$emit('current-change', newRowData, oldRowData)
     }
   },
   created () {
@@ -246,6 +258,11 @@ export default {
     },
     getColumn (columnName) {
       return this.columns.find((column) => column.prop === columnName)
+    },
+    rowClick (row) {
+      // 高亮选中的行，其他行都是不高亮
+      this.setCurrentRow(row.data)
+      this.$emit('row-click', row.data)
     },
     emitRowSelectClick (options) {
       const selectRows = this.displayedRows.filter(row => !!row.isSelected && !!row.isSelectable)
@@ -304,6 +321,17 @@ export default {
           row.isSelected = status
         }
       })
+    },
+    setCurrentRow (rowData) {
+      if (this.highLight) {
+        const rows = this.displayedRows
+        const rowsData = rows.map(r => r.data)
+        const index = rowsData.indexOf(rowData)
+        rows.forEach((row, i) => {
+          row.isHighLight = !!(i === index)
+        })
+      }
+      this.currentRow = rowData
     },
     deleteProp (data, prop) {
       // TODO: 这里要用map嘛?
@@ -403,6 +431,9 @@ $--table-row-hover-background-color: $--background-color-base;
     background-color: $--color-white;
     input[type="checkbox"] {
       margin: 0;
+    }
+    &.high-light {
+      background-color: $--table-current-row-background-color;
     }
     .is-center {
       text-align: center;
