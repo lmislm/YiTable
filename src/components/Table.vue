@@ -212,6 +212,9 @@ export default {
         })
       }
     })
+    const columnProps = this.columns.filter(col => Boolean(col.prop)).map(col => ({ prop: col.prop, label: col.label }))
+    // 封装的组件中，这里会有区别
+    this.$emit('column-props', columnProps)
     await this.mapDataToRows()
   },
   methods: {
