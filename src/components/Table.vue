@@ -332,8 +332,8 @@ $--table-border-color: $--border-color-lighter !default;
 
 $--table-font-color: $--color-text-regular;
 $--table-border: 1px solid $--table-border-color !default;
-$--table-current-row-background-color: $--color-primary-light-1 !default;
-$--table-row-hover-background-color: $--background-color-base !important;
+$--table-current-row-background-color: $--color-primary-light-1 !important;
+$--table-row-hover-background-color: $--background-color-base;
 
 .yi-table {
   position: relative;
@@ -364,9 +364,7 @@ $--table-row-hover-background-color: $--background-color-base !important;
   .stripe {
     & .yi-table__body {
       & tr.even {
-        td {
-          background: #fafafa;
-        }
+        background: #fafafa;
       }
     }
   }
@@ -380,11 +378,11 @@ $--table-row-hover-background-color: $--background-color-base !important;
       text-align: right;
     }
     .yi-table__body {
-      tr:hover > td {
-        background-color: $--table-row-hover-background-color;
-      }
-      td {
+      tr {
         transition: background-color 0.25s ease;
+        &:hover {
+          background-color: $--table-row-hover-background-color;
+        }
       }
     }
   }
