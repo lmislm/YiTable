@@ -6,7 +6,7 @@
         :showRows="currentColumns"
         border
         stripe
-        highLight
+        highlight-current-row
         align="left"
         ref="yitable"
         @selection-change="handleSelection"
