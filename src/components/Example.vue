@@ -6,6 +6,7 @@
         :showRows="currentColumns"
         border
         stripe
+        highLight
         align="left"
         ref="yitable"
         @selection-change="handleSelection"
@@ -49,6 +50,10 @@
         <button @click="recoveryData">列表还原</button>
         <div>当前列：{{currentColumns}}</div>
         <div>原有列：{{mockHiddenData}}</div>
+      </div>
+      <div class="opt">
+        <div class="title">高亮某行</div>
+        <button @click="highLightRow">高亮某行</button>
       </div>
     </div>
   </div>
@@ -98,11 +103,16 @@ export default {
         '-----',
         'table：data、sortBy、sortOrder、tableClass、theadClass、tbodyClass、show-header、showRows（Array）, slot="empty-text"',
         'table-column：prop、label、hidden、sortable、dataType、cellClass、headerClass、formatter、sortBy、width、min-width',
-        'toggleRowSelection、clearSelection'
+        'toggleRowSelection、clearSelection',
+        '-----',
+        'Events: current-change（选中的某一行）、row-click、select-all（全选）、column-props（表格中有prop的列，用于隐藏列，返回{prop,label}，这个应该封装在表格中）、selection-change（选中列变化，type是selection时候生效）'
       ]
     }
   },
   methods: {
+    highLightRow () {
+      this.$refs.yitable.setCurrentRow(this.mockData[3])
+    },
     handleSelection (selection) {
       // 有bug
       this.selectionRows = selection
