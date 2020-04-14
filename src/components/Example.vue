@@ -101,7 +101,7 @@ export default {
         'formatter：它用于格式化指定列的值，接受一个Function，会传入两个参数：row和column；',
         'showColumns：待展示的列，接受每一列的prop，无prop则默认显示',
         '-----',
-        'table：data、sortBy、sortOrder、tableClass、theadClass、tbodyClass、show-header、showColumns（Array）, slot="empty-text"',
+        'table：data、sortBy、sortOrder、tableClass、theadClass、tbodyClass、show-header、showColumns（Array）, slot="empty-text"，cache(Boolean)：是否缓存表格的列配置，默认开启，会根据URL来配置，cacheKey：除了根据pathname来配置以外还可以添加key，为了实现同URL多个TABLE',
         'table-column：prop、label、hidden、sortable、dataType、cellClass、headerClass、formatter、sortBy、width、min-width',
         'toggleRowSelection、clearSelection',
         '-----',
