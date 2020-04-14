@@ -21,8 +21,8 @@
             </table-column-header>
           </tr>
           <tr v-show="showFilter">
-            <th v-for="column in columns" :key="column.prop">
-              <slot :name="column.prop" />
+            <th v-for="(col, index) in columns" :key="index">
+              <span v-if="!col.hidden" class="cell"><slot :name="col.prop" /></span>
             </th>
           </tr>
         </thead>
@@ -32,9 +32,10 @@
               :key="index"
               :row="row"
               :index="index"
-              :class="[index%2 == 1 ? 'even' : 'odd']"
+              :class="[index%2 == 1 ? 'even' : 'odd', row.isHighLight ? 'high-light' : '']"
               :columns="columns"
               @rowSelect="emitRowSelectClick"
+              @row-click="rowClick"
             />
             <slot name="after-row" :index="index" :row="row.data" :columns="columns" />
           </template>
@@ -42,9 +43,9 @@
         <slot name="footer" />
       </table>
     </div>
-    <div v-if="displayedRows.length === 0" class="yi-table__empty-text">{{emptyText}}</div>
-    <div v-if="displayedRows.length === 0 && !emptyText" class="yi-table__empty">
-      <slot />
+    <slot/>
+    <div v-if="!displayedRows.length" class="yi-table__empty yi-table__empty-text">
+      <slot name="empty-text">~</slot>
     </div>
   </div>
 </template>
@@ -80,10 +81,6 @@ export default {
       default: ''
     },
     showFilter: Boolean,
-    emptyText: {
-      type: String,
-      default: ''
-    },
     tableClass: {
       type: Function,
       default: () => ''
@@ -107,12 +104,14 @@ export default {
       type: String,
       default: ''
     },
+    highlightCurrentRow: Boolean,
     showRows: Array
   },
 
   data: () => ({
     columns: [],
     rows: [],
+    currentRow: {},
     sort: {
       fieldName: '',
       order: ''
@@ -143,6 +142,11 @@ export default {
       if (isSelectable) {
         this.sortedRows.forEach(row => {
           this.$set(row, 'isSelectable', true)
+        })
+      }
+      if (this.highlightCurrentRow) {
+        this.sortedRows.forEach(row => {
+          this.$set(row, 'isHighLight', false)
         })
       }
       if (!this.usesLocalData) {
@@ -196,6 +200,10 @@ export default {
         this.allSelectedIndeterminate = false
       }
       this.emitRowSelectClick({ isAll: true })
+    },
+    currentRow (newRowData, oldRowData) {
+      // Todo: 比对新旧
+      this.$emit('current-change', newRowData, oldRowData)
     }
   },
   created () {
@@ -216,6 +224,9 @@ export default {
         })
       }
     })
+    const columnProps = this.columns.filter(col => Boolean(col.prop)).map(col => ({ prop: col.prop, label: col.label }))
+    // 封装的组件中，这里会有区别
+    this.$emit('column-props', columnProps)
     await this.mapDataToRows()
   },
   methods: {
@@ -247,6 +258,11 @@ export default {
     },
     getColumn (columnName) {
       return this.columns.find((column) => column.prop === columnName)
+    },
+    rowClick (row) {
+      // 高亮选中的行，其他行都是不高亮
+      this.setCurrentRow(row.data)
+      this.$emit('row-click', row.data)
     },
     emitRowSelectClick (options) {
       const selectRows = this.displayedRows.filter(row => !!row.isSelected && !!row.isSelectable)
@@ -306,6 +322,17 @@ export default {
         }
       })
     },
+    setCurrentRow (rowData) {
+      if (this.highlightCurrentRow) {
+        const rows = this.displayedRows
+        const rowsData = rows.map(r => r.data)
+        const index = rowsData.indexOf(rowData)
+        rows.forEach((row, i) => {
+          row.isHighLight = !!(i === index)
+        })
+      }
+      this.currentRow = rowData
+    },
     deleteProp (data, prop) {
       // TODO: 这里要用map嘛?
       return data.map(row => {
@@ -323,18 +350,18 @@ export default {
 }
 </script>
 <style lang="scss">
-$--color-white: #ffffff !default;
-$--color-text-regular: #606266 !default;
-$--border-color-lighter: #ebeef5 !default;
+$--color-white: #ffffff;
+$--color-text-regular: #606266;
+$--border-color-lighter: #ebeef5;
 $--color-primary-light-1: #ecf5ff;
-$--background-color-base: #f5f7fa !default;
+$--background-color-base: #f5f7fa;
 
-$--table-border-color: $--border-color-lighter !default;
+$--table-border-color: $--border-color-lighter;
 
 $--table-font-color: $--color-text-regular;
-$--table-border: 1px solid $--table-border-color !default;
-$--table-current-row-background-color: $--color-primary-light-1 !default;
-$--table-row-hover-background-color: $--background-color-base !important;
+$--table-border: 1px solid $--table-border-color;
+$--table-current-row-background-color: $--color-primary-light-1 !important;
+$--table-row-hover-background-color: $--background-color-base;
 
 .yi-table {
   position: relative;
@@ -345,6 +372,15 @@ $--table-row-hover-background-color: $--background-color-base !important;
   background-color: $--color-white;
   font-size: 14px;
   color: $--table-font-color;
+  .yi-table__empty {
+    min-height: 60px;
+    display: flex;
+    justify-content: center;
+    border-left: $--table-border;
+    border-right: $--table-border;
+    border-bottom: $--table-border;
+    align-items: center;
+  }
   .border {
     border-left: $--table-border;
     border-top: $--table-border;
@@ -356,9 +392,7 @@ $--table-row-hover-background-color: $--background-color-base !important;
   .stripe {
     & .yi-table__body {
       & tr.even {
-        td {
-          background: #fafafa;
-        }
+        background: #fafafa;
       }
     }
   }
@@ -372,11 +406,11 @@ $--table-row-hover-background-color: $--background-color-base !important;
       text-align: right;
     }
     .yi-table__body {
-      tr:hover > td {
-        background-color: $--table-row-hover-background-color;
-      }
-      td {
+      tr {
         transition: background-color 0.25s ease;
+        &:hover {
+          background-color: $--table-row-hover-background-color;
+        }
       }
     }
   }
@@ -397,6 +431,9 @@ $--table-row-hover-background-color: $--background-color-base !important;
     background-color: $--color-white;
     input[type="checkbox"] {
       margin: 0;
+    }
+    &.high-light {
+      background-color: $--table-current-row-background-color;
     }
     .is-center {
       text-align: center;
