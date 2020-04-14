@@ -3,7 +3,7 @@
     <div class="item table">
       <Table
         :showFilter="showFilte"
-        :showRows="currentColumns"
+        :showColumns="currentColumns"
         border
         stripe
         highlight-current-row
@@ -99,9 +99,9 @@ export default {
         'dataType：（numeric/date）sortable为true时，numberic和date值根据数值大小排序',
         'prop：对应列内容的字段名，也可以使用 property 属性；',
         'formatter：它用于格式化指定列的值，接受一个Function，会传入两个参数：row和column；',
-        'showRows：待展示的列，接受每一列的prop，无prop则默认显示',
+        'showColumns：待展示的列，接受每一列的prop，无prop则默认显示',
         '-----',
-        'table：data、sortBy、sortOrder、tableClass、theadClass、tbodyClass、show-header、showRows（Array）, slot="empty-text"',
+        'table：data、sortBy、sortOrder、tableClass、theadClass、tbodyClass、show-header、showColumns（Array）, slot="empty-text"',
         'table-column：prop、label、hidden、sortable、dataType、cellClass、headerClass、formatter、sortBy、width、min-width',
         'toggleRowSelection、clearSelection',
         '-----',
