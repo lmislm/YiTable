@@ -105,7 +105,7 @@ export default {
       default: ''
     },
     highlightCurrentRow: Boolean,
-    showRows: Array
+    showColumns: Array
   },
 
   data: () => ({
@@ -182,7 +182,7 @@ export default {
         this.clearSelection()
       }
     },
-    showRows (v) {
+    showColumns (v) {
       if (this.usesLocalData) {
         const copyColumns = cloneDeep(this.columns)
         this.columns = copyColumns.map(col => {
