@@ -32,7 +32,7 @@
               :key="index"
               :row="row"
               :index="index"
-              :class="[index%2 == 1 ? 'even' : 'odd', row.isHighLight ? 'high-light' : '']"
+              :class="[index%2 == 1 ? 'even' : '', row.isHighLight ? 'high-light' : '']"
               :columns="columns"
               @rowSelect="emitRowSelectClick"
               @row-click="rowClick"
