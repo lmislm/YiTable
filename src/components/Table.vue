@@ -21,8 +21,8 @@
             </table-column-header>
           </tr>
           <tr v-show="showFilter">
-            <th v-for="column in columns" :key="column.prop">
-              <slot :name="column.prop" />
+            <th v-for="(col, index) in columns" :key="index">
+              <span v-if="!col.hidden" class="cell"><slot :name="col.prop" /></span>
             </th>
           </tr>
         </thead>
