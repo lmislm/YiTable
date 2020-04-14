@@ -57,6 +57,9 @@ import TableColumnHeader from './TableColumnHeader'
 import TableRow from './TableRow'
 import { classList, toggleRowStatus } from '../utils'
 import cloneDeep from 'lodash.clonedeep'
+import expiringStorage from '../utils/expiring-storage'
+
+const CACHE_NAME = 'YITABLE'
 
 export default {
   components: {
@@ -81,6 +84,18 @@ export default {
       default: ''
     },
     showFilter: Boolean,
+    cacheKey: {
+      type: String,
+      default: null,
+    },
+    cache: { // 默认存储表格列配置
+      type: Boolean,
+      default: true
+    },
+    tableCacheName: {
+      type: String,
+      default: 'YITABLE'
+    },
     tableClass: {
       type: Function,
       default: () => ''
@@ -173,6 +188,13 @@ export default {
       const rowsCopy = cloneDeep(this.rows)
       const sorted = rowsCopy.sort(sortColumn.getSortPredicate(this.sort.order, this.columns))
       return sorted
+    },
+    storageKey () {
+      // 没有cacheKey根据URL路径来判断表格
+      const storageWithCacheKey = `yi-table_${window.location.pathname}${this.cacheKey}`
+      // 是否要根据host来确定，${window.location.host}
+      const storageWithoutCacheKey = `yi-table_${window.location.pathname}`
+      return this.cacheKey ? storageWithCacheKey : storageWithoutCacheKey
     }
   },
   watch: {
@@ -188,6 +210,9 @@ export default {
         this.columns = copyColumns.map(col => {
           return { ...col, hidden: col.prop !== undefined && !~v.indexOf(col.prop) }
         })
+        if (this.cache) {
+          this.saveState()
+        }
       }
     },
     isAllSelected (v) {
@@ -226,7 +251,12 @@ export default {
     })
     const columnProps = this.columns.filter(col => Boolean(col.prop)).map(col => ({ prop: col.prop, label: col.label }))
     // 封装的组件中，这里会有区别
+    this.columnProps = columnProps
     this.$emit('column-props', columnProps)
+    // 从缓存中恢复表格列配置
+    if (this.cache) {
+      this.restoreSate()
+    }
     await this.mapDataToRows()
   },
   methods: {
@@ -332,6 +362,37 @@ export default {
         })
       }
       this.currentRow = rowData
+    },
+    saveState () {
+      // 存入value为列表类型，在这里进行查重替换
+      // { storageKey: value, storageKey2: value2 }，value是表格配置的prop
+      const cachedObj = expiringStorage.get(CACHE_NAME)
+      // 当前表格新的数据
+      const tableKey = this.storageKey
+      const tablePropsValue = this.columnProps.filter(col => ~this.showColumns.indexOf(col.prop))
+      let keyValue = {}
+      // 是否这个表格之前已经存过
+      if (cachedObj) {
+        cachedObj[tableKey] = tablePropsValue
+        // 去重塞入key检查
+        expiringStorage.set(CACHE_NAME, cachedObj)
+      } else {
+        keyValue[tableKey] = tablePropsValue
+        expiringStorage.set(CACHE_NAME, keyValue)
+      }
+    },
+    restoreSate () {
+      // 根据缓存中内容显示列表内容
+      const cachedObj = expiringStorage.get(CACHE_NAME)
+      if (cachedObj) {
+        const showColumnProps = (cachedObj[this.storageKey] || []).map(col => col.prop)
+        const clonedColumns = cloneDeep(this.columns)
+        const showColumns = clonedColumns.filter(col =>
+          (col.prop === undefined) ||
+          ~showColumnProps.indexOf(col.prop)
+        )
+        this.columns = showColumns
+      }
     },
     deleteProp (data, prop) {
       // TODO: 这里要用map嘛?
