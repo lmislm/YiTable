@@ -213,9 +213,9 @@ export default {
     },
     showColumns (v) {
       if (this.usesLocalData) {
-        const copyColumns = cloneDeep(this.columns)
-        this.columns = copyColumns.map(col => {
-          return { ...col, hidden: col.prop !== undefined && !~v.indexOf(col.prop) }
+        this.columns = this.columns.map(col => {
+          col.hidden = col.prop !== undefined && !~v.indexOf(col.prop)
+          return col
         })
         if (this.cache) {
           this.saveState()
@@ -395,9 +395,9 @@ export default {
       const cachedObj = expiringStorage.get(CACHE_NAME)
       if (cachedObj) {
         const showColumnProps = (cachedObj[this.storageKey] || [])
-        const clonedColumns = cloneDeep(this.columns)
-        this.columns = clonedColumns.map(col => {
-          return { ...col, hidden: (col.prop !== undefined) && !~showColumnProps.indexOf(col.prop) }
+        this.columns = this.columns.map(col => {
+          col.hidden = (col.prop !== undefined) && !~showColumnProps.indexOf(col.prop)
+          return col
         })
       }
     },
