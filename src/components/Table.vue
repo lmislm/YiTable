@@ -387,11 +387,9 @@ export default {
       if (cachedObj) {
         const showColumnProps = (cachedObj[this.storageKey] || []).map(col => col.prop)
         const clonedColumns = cloneDeep(this.columns)
-        const showColumns = clonedColumns.filter(col =>
-          (col.prop === undefined) ||
-          ~showColumnProps.indexOf(col.prop)
-        )
-        this.columns = showColumns
+        this.columns = clonedColumns.map(col => {
+          return { ...col, hidden: (col.prop !== undefined) && !~showColumnProps.indexOf(col.prop)}
+        })
       }
     },
     deleteProp (data, prop) {
