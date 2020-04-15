@@ -1,7 +1,12 @@
 <template>
   <div class="yi-table">
     <div class="yi-table__table-wrapper">
-      <table :class="[fullTableClass, align && `is-${align}`]" border="0" cellspacing="0" cellpadding="0">
+      <table
+        :class="[fullTableClass, align && `is-${align}`]"
+        border="0"
+        cellspacing="0"
+        cellpadding="0"
+      >
         <slot name="before-header" :columns="columns" />
         <thead :class="tableHeadClass" v-if="showHeader">
           <tr>
@@ -22,7 +27,9 @@
           </tr>
           <tr v-show="showFilter">
             <th v-for="(col, index) in columns" :key="index">
-              <span v-if="!col.hidden" class="cell"><slot :name="col.prop" /></span>
+              <span v-if="!col.hidden" class="cell">
+                <slot :name="col.prop" />
+              </span>
             </th>
           </tr>
         </thead>
@@ -43,7 +50,7 @@
         <slot name="footer" />
       </table>
     </div>
-    <slot/>
+    <slot />
     <div v-if="!displayedRows.length" class="yi-table__empty yi-table__empty-text">
       <slot name="empty-text">~</slot>
     </div>
@@ -390,7 +397,7 @@ export default {
         const showColumnProps = (cachedObj[this.storageKey] || [])
         const clonedColumns = cloneDeep(this.columns)
         this.columns = clonedColumns.map(col => {
-          return { ...col, hidden: (col.prop !== undefined) && !~showColumnProps.indexOf(col.prop)}
+          return { ...col, hidden: (col.prop !== undefined) && !~showColumnProps.indexOf(col.prop) }
         })
       }
     },
