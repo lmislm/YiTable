@@ -418,11 +418,14 @@ export default {
 }
 </script>
 <style lang="scss">
+$--theme-color: #409eff;
 $--color-white: #ffffff;
 $--color-text-regular: #606266;
 $--border-color-lighter: #ebeef5;
 $--color-primary-light-1: #ecf5ff;
 $--background-color-base: #f5f7fa;
+
+$--background-icon-color: #c0c4cc;
 
 $--table-border-color: $--border-color-lighter;
 
@@ -493,6 +496,47 @@ $--table-row-hover-background-color: $--background-color-base;
     line-height: 23px;
     padding-left: 10px;
     padding-right: 10px;
+    .sort {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      vertical-align: middle;
+      cursor: pointer;
+      overflow: initial;
+      position: relative;
+      .yi-table-sort-icon {
+        width: 12px;
+        height: 12px;
+        fill: $--background-icon-color;
+        cursor: pointer;
+        &.ascend {
+          margin-bottom: -3px;
+        }
+        &.descend {
+          margin-top: -3px;
+        }
+      }
+    }
+  }
+  .yi-table__th--sort-desc {
+    .sort {
+      .ascend {
+        fill: $--background-icon-color;
+      }
+      .descend {
+        fill: $--theme-color;
+      }
+    }
+  }
+  .yi-table__th--sort-asc {
+    .sort {
+      .ascend {
+        fill: $--theme-color;
+      }
+      .descend {
+        fill: $--background-icon-color;
+      }
+    }
   }
   tr {
     border-bottom: $--table-border;
