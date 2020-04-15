@@ -518,6 +518,13 @@ $--table-row-hover-background-color: $--background-color-base;
       }
     }
   }
+  .yi-table__th--sort,
+  .yi-table__th--sort-desc,
+  .yi-table__th--sort-asc {
+    .cell {
+      cursor: pointer;
+    }
+  }
   .yi-table__th--sort-desc {
     .sort {
       .ascend {
