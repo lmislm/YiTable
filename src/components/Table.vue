@@ -369,7 +369,9 @@ export default {
       const cachedObj = expiringStorage.get(CACHE_NAME)
       // 当前表格新的数据
       const tableKey = this.storageKey
-      const tablePropsValue = this.columnProps.filter(col => ~this.showColumns.indexOf(col.prop))
+      const tablePropsValue = this.columnProps
+        .filter(col => ~this.showColumns.indexOf(col.prop))
+        .map(col => col.prop)
       let keyValue = {}
       // 是否这个表格之前已经存过
       if (cachedObj) {
@@ -385,7 +387,7 @@ export default {
       // 根据缓存中内容显示列表内容
       const cachedObj = expiringStorage.get(CACHE_NAME)
       if (cachedObj) {
-        const showColumnProps = (cachedObj[this.storageKey] || []).map(col => col.prop)
+        const showColumnProps = (cachedObj[this.storageKey] || [])
         const clonedColumns = cloneDeep(this.columns)
         this.columns = clonedColumns.map(col => {
           return { ...col, hidden: (col.prop !== undefined) && !~showColumnProps.indexOf(col.prop)}
