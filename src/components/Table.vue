@@ -44,11 +44,14 @@
             </table-column-header>
           </tr>
           <tr v-show="showFilter || isShowFilter">
-            <th v-for="(col, index) in columns" :key="index">
-              <span v-if="!col.hidden" class="cell">
-                <slot :name="col.prop" />
-              </span>
-            </th>
+            <template v-for="(col, index) in columns">
+              <th v-if="!col.hidden" :key="index">
+                <span class="cell">
+                  {{showColumns}}
+                  <slot :name="col.prop" />
+                </span>
+              </th>
+            </template>
           </tr>
         </thead>
         <tbody :class="tableBodyClass">
