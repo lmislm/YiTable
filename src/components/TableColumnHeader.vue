@@ -15,7 +15,7 @@
       </span>
     </span>
     <span class="cell" v-else>
-      <slot name="selection"/>
+      <slot name="selection" />
     </span>
   </th>
 </template>
