@@ -1,5 +1,23 @@
 <template>
   <div class="yi-table">
+    <div class="table-set right-bottom">
+      <yi-table-icon
+        icon="yi-table-filter"
+        class="table-icon"
+        @click="isShowFilter = !isShowFilter"
+      ></yi-table-icon>
+      <yi-popover trigger="click" :options="{ placement: 'bottom' }" append-to-body>
+        <div class="yi-popover popper">
+          <div class="column-set">
+            <label :key="i" v-for="(item, i) in columnProps">
+              <input type="checkbox" v-model="item.show" :value="item.label" :id="item.label" />
+              {{item.label}}
+            </label>
+          </div>
+        </div>
+        <yi-table-icon slot="reference" icon="yi-table-option" class="table-icon"></yi-table-icon>
+      </yi-popover>
+    </div>
     <div class="yi-table__table-wrapper">
       <table
         :class="[fullTableClass, align && `is-${align}`]"
@@ -25,7 +43,7 @@
               />
             </table-column-header>
           </tr>
-          <tr v-show="showFilter">
+          <tr v-show="showFilter || isShowFilter">
             <th v-for="(col, index) in columns" :key="index">
               <span v-if="!col.hidden" class="cell">
                 <slot :name="col.prop" />
@@ -66,10 +84,13 @@ import { classList, toggleRowStatus } from '../utils'
 import cloneDeep from 'lodash.clonedeep'
 import expiringStorage from '../utils/expiring-storage'
 
+import YiPopover from './PopoverJs'
+
 const CACHE_NAME = 'YITABLE'
 
 export default {
   components: {
+    YiPopover,
     TableColumnHeader,
     TableRow
   },
@@ -126,8 +147,7 @@ export default {
       type: String,
       default: ''
     },
-    highlightCurrentRow: Boolean,
-    showColumns: Array
+    highlightCurrentRow: Boolean
   },
 
   data: () => ({
@@ -141,6 +161,9 @@ export default {
     count: undefined,
     selection: [],
     isAllSelected: false,
+    isShowFilter: false,
+    showColumns: [],
+    columnProps: [],
     allSelectedIndeterminate: false
   }),
 
@@ -236,6 +259,12 @@ export default {
     currentRow (newRowData, oldRowData) {
       // Todo: 比对新旧
       this.$emit('current-change', newRowData, oldRowData)
+    },
+    columnProps: {
+      deep: true,
+      handler (v) {
+        this.showColumns = v.filter(col => col.show).map(col => col.prop)
+      }
     }
   },
   created () {
@@ -259,6 +288,9 @@ export default {
     const columnProps = this.columns.filter(col => Boolean(col.prop)).map(col => ({ prop: col.prop, label: col.label }))
     // 封装的组件中，这里会有区别
     this.columnProps = columnProps
+    this.columnProps.forEach(col => {
+      this.$set(col, 'show', true)
+    })
     this.$emit('column-props', columnProps)
     // 从缓存中恢复表格列配置
     if (this.cache) {
@@ -420,19 +452,46 @@ export default {
 <style lang="scss">
 $--theme-color: #409eff;
 $--color-white: #ffffff;
+$--font-size-base: 14px;
 $--color-text-regular: #606266;
 $--border-color-lighter: #ebeef5;
 $--color-primary-light-1: #ecf5ff;
 $--background-color-base: #f5f7fa;
-
+$--background-color-even: #fafafa;
 $--background-icon-color: #c0c4cc;
+$--box-shadow-light: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
 
 $--table-border-color: $--border-color-lighter;
-
 $--table-font-color: $--color-text-regular;
 $--table-border: 1px solid $--table-border-color;
 $--table-current-row-background-color: $--color-primary-light-1 !important;
 $--table-row-hover-background-color: $--background-color-base;
+$--table-row-even-background-color: $--background-color-even;
+
+$--popover-background-color: $--color-white;
+$--popover-font-size: $--font-size-base;
+$--popover-border-color: $--border-color-lighter;
+$--popover-padding: 12px;
+$--index-popper: 2000;
+
+.yi-popover {
+  position: absolute;
+  background: $--popover-background-color;
+  border-radius: 4px;
+  border: $--table-border;
+  padding: $--popover-padding;
+  z-index: $--index-popper;
+  color: $--color-text-regular;
+  line-height: 1.4;
+  text-align: justify;
+  font-size: $--popover-font-size;
+  box-shadow: $--box-shadow-light;
+  word-break: break-all;
+  .column-set {
+    display: flex;
+    flex-direction: column;
+  }
+}
 
 .yi-table {
   position: relative;
@@ -443,6 +502,19 @@ $--table-row-hover-background-color: $--background-color-base;
   background-color: $--color-white;
   font-size: 14px;
   color: $--table-font-color;
+  .table-set {
+    .table-icon {
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+      fill: $--color-text-regular;
+    }
+    &.right-bottom {
+      position: absolute;
+      right: 0;
+      z-index: 1;
+    }
+  }
   .yi-table__empty {
     min-height: 60px;
     display: flex;
@@ -463,7 +535,7 @@ $--table-row-hover-background-color: $--background-color-base;
   .stripe {
     & .yi-table__body {
       & tr.even {
-        background: #fafafa;
+        background: $--table-row-even-background-color;
       }
     }
   }
