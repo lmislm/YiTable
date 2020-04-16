@@ -579,6 +579,9 @@ $--index-popper: 2000;
     line-height: 23px;
     padding-left: 10px;
     padding-right: 10px;
+    .index, .selection {
+      width: 55px;
+    }
     .sort {
       display: inline-flex;
       flex-direction: column;
