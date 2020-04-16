@@ -1,7 +1,15 @@
+import Vue from 'vue'
+
 import YiTable from './components/Table'
 import YiColumn from './components/TableColumn'
 import ColumnMixin from './components/column-mixin'
-import './icons/index'
+import YiTableIcon from '@/components/YiTableIcon'
+
+Vue.component('yi-table-icon', YiTableIcon)
+
+const req = require.context('./icons/svg')
+const requireAll = requireContext => requireContext.keys().map(requireContext)
+requireAll(req)
 
 export default {
   install(Vue) {
@@ -10,4 +18,4 @@ export default {
     Vue.component('yi-table-icon', YiTableIcon)
   }
 }
-export {YiTable, YiColumn, ColumnMixin}
+export {YiTable, YiColumn, ColumnMixin, YiTableIcon}
