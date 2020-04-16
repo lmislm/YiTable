@@ -12,7 +12,10 @@ export default {
       }
     }
     if (props.column.align) {
-      data.class = [props.column.cellClass, props.column.align && `is-${props.column.align}`]
+      data.class = [
+        props.column.cellClass,
+        props.column.align && `is-${props.column.align}`
+      ]
     }
     if (props.column.minWidth) {
       data.style = {
@@ -58,28 +61,32 @@ export default {
       }
     }
     // 表格列类型
-    const columnType = props.column.type
-    const isColumnIndex = columnType && columnType === 'index'
-    const isColumnSelection = columnType && columnType === 'selection'
-    // 序号列是否用的是实时的index
-    const isRealColumnIndex = true // options
+    const createElementValue = (function value() {
+      const columnType = props.column.type
+      const isColumnIndex = columnType && columnType === 'index'
+      const isColumnSelection = columnType && columnType === 'selection'
+      const isRealColumnIndex = true // options
+      if (isColumnIndex) {
+        // 真实id还是实时的index, 实时id:props.index,真实index:props.row.index
+        if (isRealColumnIndex) {
+          return props.row.index + 1
+        } else {
+          return props.index + 1
+        }
+      }
+      if (isColumnSelection) {
+        return children // slots().default
+      } else {
+        return props.row.getValue(props.column.prop)
+      }
+    })()
     return createElement('td', data, [
       createElement(
         'span',
         {
           class: 'cell'
         },
-        // 真实id还是实时的index, 实时id:props.index,真实index:props.row.index
-        // isColumnIndex ? props.index + 1 : props.row.getValue(props.column.prop)
-        [
-          isColumnIndex
-            ? isRealColumnIndex
-              ? props.row.index + 1
-              : props.index + 1
-            : isColumnSelection
-            ? children // slots().default
-            : props.row.getValue(props.column.prop)
-        ]
+        [createElementValue]
       )
     ])
   }
