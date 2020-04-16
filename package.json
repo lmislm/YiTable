@@ -1,11 +1,17 @@
 {
   "name": "yi-table",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "表格组件",
   "jsnext:main": "src/index.js",
   "main": "lib/yi-table.umd.min.js",
   "private": false,
-  "keywords": ["表格", "vuejs", "vue", "table", "Table"],
+  "keywords": [
+    "表格",
+    "vuejs",
+    "vue",
+    "table",
+    "Table"
+  ],
   "author": "lmislm",
   "license": "MIT",
   "repository": {
