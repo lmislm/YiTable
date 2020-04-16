@@ -14,7 +14,7 @@
         :data="isOriginalData ? mockData : dataList"
       >
         <div slot="name">名字搜索</div>
-        <table-column prop="index" type="index" width="55" label="序号" sortable></table-column>
+        <table-column prop="index" type="index" label="序号"></table-column>
         <table-column prop="selection" type="selection" width="55" :selectable="handleSelectable"></table-column>
         <table-column prop="name" label="名字" width="100" :hidden="isHiddenName"></table-column>
         <table-column prop="nickName" label="小名" sortable></table-column>
