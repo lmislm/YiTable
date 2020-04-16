@@ -237,13 +237,14 @@ export default {
         this.clearSelection()
       }
     },
-    showColumns (v) {
+    showColumns (v, oldVal) {
       if (this.usesLocalData) {
         this.columns = this.columns.map(col => {
           col.hidden = col.prop !== undefined && !~v.indexOf(col.prop)
           return col
         })
-        if (this.cache) {
+        // oldVal.length 判断，表示初始化进来时不存缓存，要手动触发配置列，才会存缓存
+        if (this.cache && oldVal.length) {
           this.saveState()
         }
       }
@@ -291,13 +292,14 @@ export default {
     const columnProps = this.columns.filter(col => Boolean(col.prop)).map(col => ({ prop: col.prop, label: col.label }))
     // 封装的组件中，这里会有区别
     this.columnProps = columnProps
-    this.columnProps.forEach(col => {
-      this.$set(col, 'show', true)
-    })
     this.$emit('column-props', columnProps)
     // 从缓存中恢复表格列配置
     if (this.cache) {
       this.restoreSate()
+    } else {
+      this.columnProps.forEach(col => {
+        this.$set(col, 'show', true)
+      })
     }
     await this.mapDataToRows()
   },
@@ -430,9 +432,12 @@ export default {
       const cachedObj = expiringStorage.get(CACHE_NAME)
       if (cachedObj) {
         const showColumnProps = (cachedObj[this.storageKey] || [])
-        this.columns = this.columns.map(col => {
-          col.hidden = (col.prop !== undefined) && !~showColumnProps.indexOf(col.prop)
-          return col
+        this.columnProps.forEach(col => {
+          this.$set(col, 'show', (col.prop === undefined) || ~showColumnProps.indexOf(col.prop))
+        })
+      } else {
+        this.columnProps.forEach(col => {
+          this.$set(col, 'show', true)
         })
       }
     },
