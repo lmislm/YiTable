@@ -37,29 +37,29 @@ export default {
         )
       ])
     }
-    // if (props.column.component) {
-    //   const component = props.column.component
-    //   component.componentOptions.propsData.row = props.row.data
-    //   return component
-    // }
+    if (props.column.component) {
+      const component = props.column.component
+      component.componentOptions.propsData.row = props.row.data
+      return component
+    }
     // TODO: 优化Function的判断
-    if (props.column.formatter.name !== '_default') {
-      data.domProps = {}
-      data.domProps.innerHTML = props.column.formatter(
-        props.row.getValue(props.column.prop),
-        props.row.data
-      )
-    }
-    if (props.column.selectable.name !== '_default') {
-      let canSelect = props.column.selectable(props.row.data, props.row.index)
-      if (canSelect === 'undefined') {
-        canSelect = true
-      }
-      props.row.isSelectable = canSelect
-      if (!canSelect) {
-        props.row.isSelected = false
-      }
-    }
+    // if (props.column.formatter.name !== '_default') {
+    //   data.domProps = {}
+    //   data.domProps.innerHTML = props.column.formatter(
+    //     props.row.getValue(props.column.prop),
+    //     props.row.data
+    //   )
+    // }
+    // if (props.column.selectable.name !== '_default') {
+    //   let canSelect = props.column.selectable(props.row.data, props.row.index)
+    //   if (canSelect === 'undefined') {
+    //     canSelect = true
+    //   }
+    //   props.row.isSelectable = canSelect
+    //   if (!canSelect) {
+    //     props.row.isSelected = false
+    //   }
+    // }
     // 表格列类型
     const createElementValue = (function value() {
       const columnType = props.column.type
