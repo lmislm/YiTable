@@ -7,9 +7,17 @@
     :aria-disabled="ariaDisabled"
     @click="clicked"
   >
-    <span class="cell" v-if="!isTypeSelection">{{ isTypeIndex ? (label || '#') : label }}</span>
+    <span class="cell" v-if="!isTypeSelection">
+      <span class="index">{{ isTypeIndex ? (label || '#') : label }}</span>
+      <span class="sort" v-if="column.sortable">
+        <yi-table-icon icon="yi-table-ascend" class="yi-table-sort-icon ascend"></yi-table-icon>
+        <yi-table-icon icon="yi-table-descend" class="yi-table-sort-icon descend"></yi-table-icon>
+      </span>
+    </span>
     <span class="cell" v-else>
-      <slot name="selection"/>
+      <span class="selection">
+        <slot name="selection" />
+      </span>
     </span>
   </th>
 </template>
@@ -57,9 +65,6 @@ export default {
       return !this.column.hidden
     },
     label () {
-      if (!this.column.label) {
-        return this.column.prop
-      }
       return this.column.label
     },
     isTypeIndex () {

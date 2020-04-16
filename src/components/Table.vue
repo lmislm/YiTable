@@ -1,7 +1,30 @@
 <template>
   <div class="yi-table">
+    <div class="table-set right-bottom">
+      <yi-table-icon
+        icon="yi-table-filter"
+        class="table-icon"
+        @click="isShowFilter = !isShowFilter"
+      ></yi-table-icon>
+      <yi-popover trigger="click" :options="{ placement: 'bottom' }" append-to-body>
+        <div class="yi-popover popper">
+          <div class="column-set">
+            <label :key="i" v-for="(item, i) in columnProps">
+              <input type="checkbox" v-model="item.show" :value="item.label" :id="item.label" />
+              {{item.label}}
+            </label>
+          </div>
+        </div>
+        <yi-table-icon slot="reference" icon="yi-table-option" class="table-icon"></yi-table-icon>
+      </yi-popover>
+    </div>
     <div class="yi-table__table-wrapper">
-      <table :class="[fullTableClass, align && `is-${align}`]" border="0" cellspacing="0" cellpadding="0">
+      <table
+        :class="[fullTableClass, align && `is-${align}`]"
+        border="0"
+        cellspacing="0"
+        cellpadding="0"
+      >
         <slot name="before-header" :columns="columns" />
         <thead :class="tableHeadClass" v-if="showHeader">
           <tr>
@@ -20,10 +43,15 @@
               />
             </table-column-header>
           </tr>
-          <tr v-show="showFilter">
-            <th v-for="(col, index) in columns" :key="index">
-              <span v-if="!col.hidden" class="cell"><slot :name="col.prop" /></span>
-            </th>
+          <tr v-show="showFilter || isShowFilter">
+            <template v-for="(col, index) in columns">
+              <th v-if="!col.hidden" :key="index">
+                <span class="cell">
+                  {{showColumns}}
+                  <slot :name="col.prop" />
+                </span>
+              </th>
+            </template>
           </tr>
         </thead>
         <tbody :class="tableBodyClass">
@@ -32,7 +60,7 @@
               :key="index"
               :row="row"
               :index="index"
-              :class="[index%2 == 1 ? 'even' : 'odd', row.isHighLight ? 'high-light' : '']"
+              :class="[index%2 == 1 ? 'even' : '', row.isHighLight ? 'high-light' : '']"
               :columns="columns"
               @rowSelect="emitRowSelectClick"
               @row-click="rowClick"
@@ -43,7 +71,10 @@
         <slot name="footer" />
       </table>
     </div>
-    <slot/>
+    <slot />
+    <div class="yi-table__empty yi-table__empty-text" v-if="!showColumns.length && displayedRows.length">
+      <slot name="empty-text">~</slot>
+    </div>
     <div v-if="!displayedRows.length" class="yi-table__empty yi-table__empty-text">
       <slot name="empty-text">~</slot>
     </div>
@@ -57,9 +88,15 @@ import TableColumnHeader from './TableColumnHeader'
 import TableRow from './TableRow'
 import { classList, toggleRowStatus } from '../utils'
 import cloneDeep from 'lodash.clonedeep'
+import expiringStorage from '../utils/expiring-storage'
+
+import YiPopover from './PopoverJs'
+
+const CACHE_NAME = 'YITABLE'
 
 export default {
   components: {
+    YiPopover,
     TableColumnHeader,
     TableRow
   },
@@ -81,6 +118,18 @@ export default {
       default: ''
     },
     showFilter: Boolean,
+    cacheKey: {
+      type: String,
+      default: null,
+    },
+    cache: { // 默认存储表格列配置
+      type: Boolean,
+      default: true
+    },
+    tableCacheName: {
+      type: String,
+      default: 'YITABLE'
+    },
     tableClass: {
       type: Function,
       default: () => ''
@@ -104,8 +153,7 @@ export default {
       type: String,
       default: ''
     },
-    highlightCurrentRow: Boolean,
-    showRows: Array
+    highlightCurrentRow: Boolean
   },
 
   data: () => ({
@@ -119,6 +167,9 @@ export default {
     count: undefined,
     selection: [],
     isAllSelected: false,
+    isShowFilter: false,
+    showColumns: [],
+    columnProps: [],
     allSelectedIndeterminate: false
   }),
 
@@ -173,6 +224,13 @@ export default {
       const rowsCopy = cloneDeep(this.rows)
       const sorted = rowsCopy.sort(sortColumn.getSortPredicate(this.sort.order, this.columns))
       return sorted
+    },
+    storageKey () {
+      // 没有cacheKey根据URL路径来判断表格
+      const storageWithCacheKey = `yi-table_${window.location.pathname}${this.cacheKey}`
+      // 是否要根据host来确定，${window.location.host}
+      const storageWithoutCacheKey = `yi-table_${window.location.pathname}`
+      return this.cacheKey ? storageWithCacheKey : storageWithoutCacheKey
     }
   },
   watch: {
@@ -182,12 +240,16 @@ export default {
         this.clearSelection()
       }
     },
-    showRows (v) {
+    showColumns (v, oldVal) {
       if (this.usesLocalData) {
-        const copyColumns = cloneDeep(this.columns)
-        this.columns = copyColumns.map(col => {
-          return { ...col, hidden: col.prop !== undefined && !~v.indexOf(col.prop) }
+        this.columns = this.columns.map(col => {
+          col.hidden = col.prop !== undefined && !~v.indexOf(col.prop)
+          return col
         })
+        // oldVal.length 判断，表示初始化进来时不存缓存，要手动触发配置列，才会存缓存
+        if (this.cache && oldVal.length) {
+          this.saveState()
+        }
       }
     },
     isAllSelected (v) {
@@ -204,6 +266,12 @@ export default {
     currentRow (newRowData, oldRowData) {
       // Todo: 比对新旧
       this.$emit('current-change', newRowData, oldRowData)
+    },
+    columnProps: {
+      deep: true,
+      handler (v) {
+        this.showColumns = v.filter(col => col.show).map(col => col.prop)
+      }
     }
   },
   created () {
@@ -226,7 +294,16 @@ export default {
     })
     const columnProps = this.columns.filter(col => Boolean(col.prop)).map(col => ({ prop: col.prop, label: col.label }))
     // 封装的组件中，这里会有区别
+    this.columnProps = columnProps
     this.$emit('column-props', columnProps)
+    // 从缓存中恢复表格列配置
+    if (this.cache) {
+      this.restoreSate()
+    } else {
+      this.columnProps.forEach(col => {
+        this.$set(col, 'show', true)
+      })
+    }
     await this.mapDataToRows()
   },
   methods: {
@@ -333,6 +410,40 @@ export default {
       }
       this.currentRow = rowData
     },
+    saveState () {
+      // 存入value为列表类型，在这里进行查重替换
+      // { storageKey: value, storageKey2: value2 }，value是表格配置的prop
+      const cachedObj = expiringStorage.get(CACHE_NAME)
+      // 当前表格新的数据
+      const tableKey = this.storageKey
+      const tablePropsValue = this.columnProps
+        .filter(col => ~this.showColumns.indexOf(col.prop))
+        .map(col => col.prop)
+      let keyValue = {}
+      // 是否这个表格之前已经存过
+      if (cachedObj) {
+        cachedObj[tableKey] = tablePropsValue
+        // 去重塞入key检查
+        expiringStorage.set(CACHE_NAME, cachedObj)
+      } else {
+        keyValue[tableKey] = tablePropsValue
+        expiringStorage.set(CACHE_NAME, keyValue)
+      }
+    },
+    restoreSate () {
+      // 根据缓存中内容显示列表内容
+      const cachedObj = expiringStorage.get(CACHE_NAME)
+      if (cachedObj) {
+        const showColumnProps = (cachedObj[this.storageKey] || [])
+        this.columnProps.forEach(col => {
+          this.$set(col, 'show', (col.prop === undefined) || ~showColumnProps.indexOf(col.prop))
+        })
+      } else {
+        this.columnProps.forEach(col => {
+          this.$set(col, 'show', true)
+        })
+      }
+    },
     deleteProp (data, prop) {
       // TODO: 这里要用map嘛?
       return data.map(row => {
@@ -350,18 +461,48 @@ export default {
 }
 </script>
 <style lang="scss">
+$--theme-color: #409eff;
 $--color-white: #ffffff;
+$--font-size-base: 14px;
 $--color-text-regular: #606266;
 $--border-color-lighter: #ebeef5;
 $--color-primary-light-1: #ecf5ff;
 $--background-color-base: #f5f7fa;
+$--background-color-even: #fafafa;
+$--background-icon-color: #c0c4cc;
+$--box-shadow-light: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
 
 $--table-border-color: $--border-color-lighter;
-
 $--table-font-color: $--color-text-regular;
 $--table-border: 1px solid $--table-border-color;
 $--table-current-row-background-color: $--color-primary-light-1 !important;
 $--table-row-hover-background-color: $--background-color-base;
+$--table-row-even-background-color: $--background-color-even;
+
+$--popover-background-color: $--color-white;
+$--popover-font-size: $--font-size-base;
+$--popover-border-color: $--border-color-lighter;
+$--popover-padding: 12px;
+$--index-popper: 2000;
+
+.yi-popover {
+  position: absolute;
+  background: $--popover-background-color;
+  border-radius: 4px;
+  border: $--table-border;
+  padding: $--popover-padding;
+  z-index: $--index-popper;
+  color: $--color-text-regular;
+  line-height: 1.4;
+  text-align: justify;
+  font-size: $--popover-font-size;
+  box-shadow: $--box-shadow-light;
+  word-break: break-all;
+  .column-set {
+    display: flex;
+    flex-direction: column;
+  }
+}
 
 .yi-table {
   position: relative;
@@ -372,6 +513,19 @@ $--table-row-hover-background-color: $--background-color-base;
   background-color: $--color-white;
   font-size: 14px;
   color: $--table-font-color;
+  .table-set {
+    .table-icon {
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+      fill: $--color-text-regular;
+    }
+    &.right-bottom {
+      position: absolute;
+      right: 0;
+      z-index: 1;
+    }
+  }
   .yi-table__empty {
     min-height: 60px;
     display: flex;
@@ -392,7 +546,7 @@ $--table-row-hover-background-color: $--background-color-base;
   .stripe {
     & .yi-table__body {
       & tr.even {
-        background: #fafafa;
+        background: $--table-row-even-background-color;
       }
     }
   }
@@ -425,6 +579,57 @@ $--table-row-hover-background-color: $--background-color-base;
     line-height: 23px;
     padding-left: 10px;
     padding-right: 10px;
+    .index, .selection {
+      width: 55px;
+    }
+    .sort {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      vertical-align: middle;
+      cursor: pointer;
+      overflow: initial;
+      position: relative;
+      .yi-table-sort-icon {
+        width: 12px;
+        height: 12px;
+        fill: $--background-icon-color;
+        cursor: pointer;
+        &.ascend {
+          margin-bottom: -3px;
+        }
+        &.descend {
+          margin-top: -3px;
+        }
+      }
+    }
+  }
+  .yi-table__th--sort,
+  .yi-table__th--sort-desc,
+  .yi-table__th--sort-asc {
+    .cell {
+      cursor: pointer;
+    }
+  }
+  .yi-table__th--sort-desc {
+    .sort {
+      .ascend {
+        fill: $--background-icon-color;
+      }
+      .descend {
+        fill: $--theme-color;
+      }
+    }
+  }
+  .yi-table__th--sort-asc {
+    .sort {
+      .ascend {
+        fill: $--theme-color;
+      }
+      .descend {
+        fill: $--background-icon-color;
+      }
+    }
   }
   tr {
     border-bottom: $--table-border;
