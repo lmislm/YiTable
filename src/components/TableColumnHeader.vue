@@ -63,9 +63,6 @@ export default {
       return !this.column.hidden
     },
     label () {
-      if (!this.column.label) {
-        return this.column.prop
-      }
       return this.column.label
     },
     isTypeIndex () {
