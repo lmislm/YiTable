@@ -47,7 +47,6 @@
             <template v-for="(col, index) in columns">
               <th v-if="!col.hidden" :key="index">
                 <span class="cell">
-                  {{showColumns}}
                   <slot :name="col.prop" />
                 </span>
               </th>
