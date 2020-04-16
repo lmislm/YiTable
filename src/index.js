@@ -2,11 +2,15 @@ import YiTable from './components/Table'
 import YiColumn from './components/TableColumn'
 import ColumnMixin from './components/column-mixin'
 import './icons/index'
-
-export default {
-  install(Vue) {
-    Vue.component('yi-table', YiTable)
-    Vue.component('yi-table-column', YiColumn)
-  }
+const components = [YiTable, YiColumn, ColumnMixin]
+const install = function (Vue) {
+  if (install.installed) return
+  components.map(com => Vue.component(com.name, com))
 }
-export {YiTable, YiColumn, ColumnMixin}
+// script直接引入文件
+if (typeof window !== 'undefined' && window.Vue) {
+  install(window.Vue)
+}
+export default {
+  install
+}
