@@ -11,4 +11,4 @@ export default {
     Vue.component('yi-table-icon', YiTableIcon)
   }
 }
-export {YiTable, YiColumn, ColumnMixin}
+export {YiTable, YiColumn, ColumnMixin, YiTableIcon}
