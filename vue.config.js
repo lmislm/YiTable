@@ -1,13 +1,13 @@
 const path = require('path')
 
 const port = 8100 // dev port
-const path = require('path')
 
 function resolve(dir) {
   return path.join(__dirname, dir)
 }
 module.exports = {
   publicPath: '/dist/',
+  productionSourceMap:false,
   css: {
     extract: false
   },
