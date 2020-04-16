@@ -72,6 +72,9 @@
       </table>
     </div>
     <slot />
+    <div class="yi-table__empty yi-table__empty-text" v-if="!showColumns.length && displayedRows.length">
+      <slot name="empty-text">~</slot>
+    </div>
     <div v-if="!displayedRows.length" class="yi-table__empty yi-table__empty-text">
       <slot name="empty-text">~</slot>
     </div>
