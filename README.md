@@ -5,6 +5,7 @@
 ```sh
 $ [sudo] npm i yi-table
 ```
+
 Next, you must register the component. The most common use case is to do that globally.
 
 ```js
@@ -34,6 +35,16 @@ example
   <yi-table-column prop="age" label="年龄" sortable></yi-table-column>
   <yi-table-column prop="birthday" label="生日"></yi-table-column>
 </yi-table>
+```
+
+
+## Example
+
+```sh
+$ cd /yi-table
+$ git checkout dev
+$ npm i
+$ npm start
 ```
 
 
