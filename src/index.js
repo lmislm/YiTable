@@ -18,8 +18,4 @@ export default {
     Vue.component('yi-table-icon', YiTableIcon)
   }
 }
-// script方式引入
-if (typeof window !== 'undefined' && window.Vue) {
-  install(window.Vue)
-}
 export {YiTable, YiColumn, ColumnMixin}
