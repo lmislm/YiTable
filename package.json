@@ -26,6 +26,9 @@
     "start": "npm run serve src/index.js",
     "svgo": "svgo -f src/icons/svg"
   },
+  "files": [
+    "lib"
+  ],
   "dependencies": {
     "core-js": "^3.6.4",
     "lodash.clonedeep": "^4.5.0",
