@@ -37,12 +37,12 @@ module.exports = {
     // set svg-sprite-loader，支持svg
     config.module
       .rule('svg')
-      .exclude.add(resolve('src/icons'))
+      .exclude.add(resolve('src/icon'))
       .end()
     config.module
       .rule('icons')
       .test(/\.svg$/)
-      .include.add(resolve('src/icons'))
+      .include.add(resolve('src/icon'))
       .end()
       .use('svg-sprite-loader')
       .loader('svg-sprite-loader')
