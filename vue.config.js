@@ -24,7 +24,8 @@ module.exports = {
   configureWebpack: {
     resolve: {
       alias: {
-        '@': resolve('src')
+        '@': resolve('src'),
+        'vue': path.resolve('./node_modules/vue')
       }
     }
   },
