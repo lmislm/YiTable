@@ -1,6 +1,6 @@
 {
   "name": "yi-table",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "表格组件",
   "jsnext:main": "src/index.js",
   "main": "lib/yi-table.umd.min.js",
