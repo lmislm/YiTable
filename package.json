@@ -10,7 +10,7 @@
     "lint": "vue-cli-service lint",
     "lib": "vue-cli-service build --target lib --name yi-table --dest lib src/index.js",
     "start": "npm run serve src/index.js",
-    "svgo": "svgo -f src/icons/svg"
+    "svgo": "svgo -f src/icon/svg"
   },
   "files": [
     "lib"
