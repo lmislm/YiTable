@@ -13,6 +13,8 @@
         @selection-change="handleSelection"
         :data="isOriginalData ? mockData : dataList"
       >
+        <span slot="filter-icon">筛选slot</span>
+        <span slot="option-icon">过滤slot</span>
         <div slot="name">名字搜索</div>
         <table-column prop="index" type="index" label="序号"></table-column>
         <table-column prop="selection" type="selection" width="55" :selectable="handleSelectable"></table-column>
@@ -47,7 +49,7 @@
       </div>
       <div class="opt">
         <div class="title">数据操作：</div>
-        <input type="checkbox" v-model="isOriginalData">
+        <input type="checkbox" v-model="isOriginalData" />
         <button @click="deleteData" :disabled="isOriginalData">删除数据</button>
         <button @click="copyData" :disabled="isOriginalData">展示数据</button>
       </div>
@@ -112,6 +114,7 @@ export default {
         'table-column：prop、label、hidden、sortable、dataType、cellClass、headerClass、formatter、sortBy、width、min-width',
         'toggleRowSelection、clearSelection',
         '-----',
+        'slot: filter-icon(筛选图标slot),option-icon(列配置图标）',
         'Events: current-change（选中的某一行）、row-click、select-all（全选）、column-props（表格中有prop的列，用于隐藏列，返回{prop,label}，这个应该封装在表格中）、selection-change（选中列变化，type是selection时候生效）'
       ]
     }
