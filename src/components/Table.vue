@@ -75,7 +75,7 @@
       </table>
     </div>
     <slot />
-    <div class="yi-table__empty yi-table__empty-text" v-if="!showColumns.length && displayedRows.length">
+    <div class="yi-table__empty yi-table__empty-text" v-if="!showColumns.length && displayedRows.length && !hasShowColumn">
       <slot name="empty-text">~</slot>
     </div>
     <div v-if="!displayedRows.length" class="yi-table__empty yi-table__empty-text">
@@ -172,6 +172,7 @@ export default {
     isAllSelected: false,
     isShowFilter: false,
     showColumns: [],
+    hasShowColumn: false,
     columnProps: [],
     allSelectedIndeterminate: false
   }),
@@ -249,6 +250,8 @@ export default {
           col.hidden = col.prop !== undefined && !~v.indexOf(col.prop)
           return col
         })
+        // 判断列表中还有展示的没有计入的列prop为undefined
+        this.hasShowColumn = this.columns.find(col => col.prop === undefined)
         // oldVal.length 判断，表示初始化进来时不存缓存，要手动触发配置列，才会存缓存
         if (this.cache && oldVal.length) {
           this.saveState()
