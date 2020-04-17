@@ -27,6 +27,9 @@ module.exports = {
         '@': resolve('src'),
         'vue': path.resolve('./node_modules/vue')
       }
+    },
+    externals: {
+      vue: 'Vue'
     }
   },
   chainWebpack: config => {
