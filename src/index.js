@@ -7,7 +7,7 @@ import YiTableIcon from '@/components/YiTableIcon'
 
 Vue.component('yi-table-icon', YiTableIcon)
 
-const req = require.context('./icons/svg')
+const req = require.context('./icon/svg')
 const requireAll = requireContext => requireContext.keys().map(requireContext)
 requireAll(req)
 
