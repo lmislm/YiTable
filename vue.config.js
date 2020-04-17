@@ -23,6 +23,10 @@ module.exports = {
       alias: {
         '@': resolve('src')
       }
+    },
+    externals: {
+      Vue: 'vue',
+      vue: 'Vue'
     }
   },
   chainWebpack: config => {
