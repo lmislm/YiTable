@@ -1,11 +1,11 @@
 <template>
   <div class="yi-table">
     <div class="table-set right-bottom">
-      <yi-table-icon
-        icon="yi-table-filter"
-        class="table-icon"
-        @click="isShowFilter = !isShowFilter"
-      ></yi-table-icon>
+      <span @click="isShowFilter = !isShowFilter">
+        <slot name="filter-icon">
+          <yi-table-icon icon="yi-table-filter" class="table-icon"></yi-table-icon>
+        </slot>
+      </span>
       <yi-popover trigger="click" :options="{ placement: 'bottom' }" append-to-body>
         <div class="yi-popover popper">
           <div class="column-set">
@@ -15,7 +15,11 @@
             </label>
           </div>
         </div>
-        <yi-table-icon slot="reference" icon="yi-table-option" class="table-icon"></yi-table-icon>
+        <span slot="reference">
+          <slot name="option-icon">
+            <yi-table-icon icon="yi-table-option" class="table-icon"></yi-table-icon>
+          </slot>
+        </span>
       </yi-popover>
     </div>
     <div class="yi-table__table-wrapper">
