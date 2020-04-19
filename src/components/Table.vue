@@ -514,7 +514,7 @@ $--index-popper: 2000;
 
 .yi-table {
   position: relative;
-  overflow: hidden;
+  overflow-y: auto;
   box-sizing: border-box;
   width: 100%;
   max-width: 100%;
