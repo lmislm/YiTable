@@ -580,7 +580,7 @@ $--index-popper: 2000;
     display: inline-block;
     width: 100%;
     box-sizing: border-box;
-    overflow: hidden;
+    overflow-y: scroll;
     text-overflow: ellipsis;
     white-space: normal;
     word-break: break-all;
