@@ -1,5 +1,4 @@
-import Vue from 'vue'
-
+import Vue from 'vue/dist/vue.runtime.esm'
 import YiTable from './components/Table'
 import YiColumn from './components/TableColumn'
 import ColumnMixin from './components/column-mixin'
