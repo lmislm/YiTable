@@ -92,6 +92,7 @@ import TableRow from './TableRow'
 import { classList, toggleRowStatus } from '../utils'
 import cloneDeep from 'lodash.clonedeep'
 import expiringStorage from '../utils/expiring-storage'
+import YiTableIcon from '@/components/YiTableIcon'
 
 import YiPopover from './PopoverJs'
 
@@ -101,7 +102,8 @@ export default {
   components: {
     YiPopover,
     TableColumnHeader,
-    TableRow
+    TableRow,
+    YiTableIcon
   },
   props: {
     data: {
