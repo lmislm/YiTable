@@ -30,10 +30,8 @@
     "lib"
   ],
   "dependencies": {
-    "core-js": "^3.6.4",
     "lodash.clonedeep": "^4.5.0",
     "popper.js": "^1.15.0",
-    "svg-sprite-loader": "^4.2.5",
     "vue": "^2.6.11"
   },
   "devDependencies": {
@@ -45,6 +43,7 @@
     "eslint-plugin-vue": "^6.1.2",
     "node-sass": "^4.13.1",
     "sass-loader": "^8.0.2",
+    "svg-sprite-loader": "^4.2.5",
     "vue-template-compiler": "^2.6.11"
   },
   "eslintConfig": {
