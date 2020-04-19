@@ -24,8 +24,10 @@
 
 <script>
 import { classList } from '../utils'
+import YiTableIcon from '@/components/YiTableIcon'
 
 export default {
+  components: { YiTableIcon },
   props: {
     column: {
       type: Object,
