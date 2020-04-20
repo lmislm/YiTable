@@ -229,18 +229,14 @@ export default {
       if (!sortColumn) {
         return this.rows
       }
-      // 深拷贝，JSON.parse方法会有函数循环限制
       // slice makes a copy of the array, instead of mutating the orginal
       const rowsCopy = cloneDeep(this.rows)
       const sorted = rowsCopy.sort(sortColumn.getSortPredicate(this.sort.order, this.columns))
       return sorted
     },
     storageKey () {
-      // 没有cacheKey根据URL路径来判断表格
-      const storageWithCacheKey = `yi-table_${window.location.pathname}${this.cacheKey}`
-      // 是否要根据host来确定，${window.location.host}
-      const storageWithoutCacheKey = `yi-table_${window.location.pathname}`
-      return this.cacheKey ? storageWithCacheKey : storageWithoutCacheKey
+      // 根据业务cacheKey来缓存cache名，TODO: 处理异常
+      return this.cacheKey || ''
     }
   },
   watch: {
@@ -428,6 +424,7 @@ export default {
       const cachedObj = expiringStorage.get(CACHE_NAME)
       // 当前表格新的数据
       const tableKey = this.storageKey
+      if (!tableKey) return
       const tablePropsValue = this.columnProps
         .filter(col => ~this.showColumns.indexOf(col.prop))
         .map(col => col.prop)
