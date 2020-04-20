@@ -37,7 +37,9 @@ example
 ```
 ## TODO
 
+- [ ] 详细文档
 - [ ] `table 属性`tableRowClassName
+- [ ] `table-column 属性`show-overflow-tooltip
 
 ## <span id="git-commit">Git Commit Guidelines</span> [↑Top](#top)
 
