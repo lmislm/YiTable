@@ -63,7 +63,6 @@
               :key="index"
               :row="row"
               :index="index"
-              :class="[index%2 == 1 ? 'even' : '', row.isHighLight ? 'high-light' : '']"
               :row-class-name="rowClassName"
               :columns="columns"
               @rowSelect="emitRowSelectClick"

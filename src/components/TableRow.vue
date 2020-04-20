@@ -1,5 +1,5 @@
 <template>
-  <tr @click="$emit('row-click', row)" :class="trRowClassName()">
+  <tr @click="$emit('row-click', row)" :class="[...getRowTrClasses()]">
     <cell v-for="(column, i) in visibleColumns" :key="i" :row="row" :index="index" :column="column">
       <input
         v-if="column.type === 'selection'"
@@ -43,7 +43,7 @@ export default {
     }
   },
   methods: {
-    trRowClassName () {
+    setTrRowClassName () {
       if (this.isString(this.rowClassName)) {
         return this.rowClassName
       }
@@ -57,6 +57,9 @@ export default {
         index: this.rowIndex,
         selected: !!row.isSelected
       })
+    },
+    getRowTrClasses () {
+      return [this.index % 2 == 1 ? 'even' : '', this.row.isHighLight ? 'high-light' : '', this.setTrRowClassName()]
     },
     isString (value) {
       const type = typeof value
