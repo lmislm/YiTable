@@ -355,7 +355,8 @@ export default {
     },
     emitRowSelectClick (options) {
       // 优化这个options
-      const selectRows = this.displayedRows.filter(row => !!row.isSelected && !!row.isSelectable)
+      const selectRows = this.displayedRows.filter(row => !!row.isSelectable && !!row.isSelected)
+      console.log('emitRowSelectClick', selectRows)
       const selection = (this.deleteProp(selectRows, 'isSelected') || [])
         .map(row => row.data)
       // 累计所有选中的数据的data，推入一个数组
@@ -391,26 +392,23 @@ export default {
       this.isAllSelected = false
       this.$emit('selection-change', [])
     },
-    testRowSelect () {
-      console.log(this.selection, 'slice()')
-      this.toggleRowSelection(this.displayedRows[2].data, true)
-    },
-    toggleRowSelection (row, isSelected) {
-      const change = toggleRowStatus(this.selection, row, isSelected)
+    toggleRowSelection (rowData, isSelected) {
+      const selected = !(isSelected)
+      const change = toggleRowStatus(this.selection, rowData, selected)
       if (change) {
-        // this.setRowSelectedStatus(this.displayedRows, row, isSelected)
-        // console.log(this.selection, 'selection, toggleRow', this.displayedRows)
+        this.setRowSelectedStatus(this.displayedRows, rowData, selected)
       }
-      console.log(change)
+      // console.log(change, rowData, selected, 'toggleRowSelection')
     },
-    setRowSelectedStatus (rows, row, status) {
-      const index = rows.indexOf(row)
-      // rows[index].isSelected = status
+    setRowSelectedStatus (rows, rowData, status) {
+      const rowDatas = rows.map(row => row.data)
+      const index = rowDatas.indexOf(rowData)
       rows.forEach((row, i) => {
         if (i === index) {
-          row.isSelected = status
+          this.$set(row, 'isSelected', status)
         }
       })
+      this.emitRowSelectClick({isAll: false})
     },
     setCurrentRow (rowData) {
       if (this.highlightCurrentRow) {
