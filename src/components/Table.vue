@@ -1,9 +1,9 @@
 <template>
   <div class="yi-table">
-    <div class="table-set right-bottom">
+    <div class="yi-table-set right-bottom outside" v-if="showOption">
       <span @click="isShowFilter = !isShowFilter">
         <slot name="filter-icon">
-          <yi-table-icon icon="yi-table-filter" class="table-icon"></yi-table-icon>
+          <yi-table-icon icon="yi-table-filter" class="table-icon filter"></yi-table-icon>
         </slot>
       </span>
       <yi-popover trigger="click" :options="{ placement: 'bottom' }" append-to-body>
@@ -17,7 +17,7 @@
         </div>
         <span slot="reference">
           <slot name="option-icon">
-            <yi-table-icon icon="yi-table-option" class="table-icon"></yi-table-icon>
+            <yi-table-icon icon="yi-table-option" class="table-icon option"></yi-table-icon>
           </slot>
         </span>
       </yi-popover>
@@ -158,7 +158,11 @@ export default {
       type: String,
       default: ''
     },
-    highlightCurrentRow: Boolean
+    highlightCurrentRow: Boolean,
+    showOption: {
+      type: Boolean,
+      default: true
+    }
   },
 
   data: () => ({
@@ -514,25 +518,36 @@ $--index-popper: 2000;
 
 .yi-table {
   position: relative;
-  overflow: hidden;
   box-sizing: border-box;
   width: 100%;
   max-width: 100%;
   background-color: $--color-white;
   font-size: 14px;
   color: $--table-font-color;
-  .table-set {
+  // overflow-y: auto;
+  height: 100%;
+  .yi-table-set {
     .table-icon {
-      width: 16px;
-      height: 16px;
+      width: 18px;
+      height: 18px;
       cursor: pointer;
       fill: $--color-text-regular;
+      &.filter {
+        margin-right: 5px;
+      }
     }
     &.right-bottom {
       position: absolute;
       right: 0;
       z-index: 1;
     }
+    &.outside {
+      top: -20px;
+    }
+  }
+  .yi-table__table-wrapper {
+    height: inherit;
+    overflow-y: auto;
   }
   .yi-table__empty {
     min-height: 60px;
@@ -603,6 +618,7 @@ $--index-popper: 2000;
         fill: $--background-icon-color;
         cursor: pointer;
         &.ascend {
+          margin-top: -3px;
           margin-bottom: -3px;
         }
         &.descend {
