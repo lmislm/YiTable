@@ -204,7 +204,7 @@ export default {
     },
     displayedRows () {
       const isSelectable = this.hasTypeSelection(this.sortedRows)
-      if (isSelectable) {
+      if (isSelectable) { // 是否禁用多选的某列
         this.sortedRows.forEach(row => {
           this.$set(row, 'isSelectable', true)
         })
@@ -354,6 +354,7 @@ export default {
       this.$emit('row-click', row.data)
     },
     emitRowSelectClick (options) {
+      // 优化这个options
       const selectRows = this.displayedRows.filter(row => !!row.isSelected && !!row.isSelectable)
       const selection = (this.deleteProp(selectRows, 'isSelected') || [])
         .map(row => row.data)
