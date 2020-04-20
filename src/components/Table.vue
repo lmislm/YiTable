@@ -64,6 +64,7 @@
               :row="row"
               :index="index"
               :class="[index%2 == 1 ? 'even' : '', row.isHighLight ? 'high-light' : '']"
+              :row-class-name="rowClassName"
               :columns="columns"
               @rowSelect="emitRowSelectClick"
               @row-click="rowClick"
@@ -152,6 +153,7 @@ export default {
     },
     stripe: Boolean,
     border: Boolean,
+    rowClassName: [String, Function],
     maxHeight: [String, Number],
     showHeader: {
       type: Boolean,
@@ -641,7 +643,7 @@ $--scrollbar-hover-background-color: rgba($--color-text-secondary, 0.5);
       }
       tr {
         border-bottom: $--table-border;
-        background-color: $--color-white;
+        // background-color: $--color-white;
         input[type='checkbox'] {
           margin: 0;
         }
@@ -685,13 +687,11 @@ $--scrollbar-hover-background-color: rgba($--color-text-secondary, 0.5);
           border-right: $--table-border;
         }
       }
-      &.stripe {
-        & .yi-table__body {
-          & tr.even {
-            background: $--table-row-even-background-color;
-          }
-        }
-      }
+      // &.stripe {
+      //   &,.even {
+      //     background-color: $--table-row-even-background-color;
+      //   }
+      // }
     }
   }
   .yi-table__empty {
@@ -702,6 +702,15 @@ $--scrollbar-hover-background-color: rgba($--color-text-secondary, 0.5);
     border-right: $--table-border;
     border-bottom: $--table-border;
     align-items: center;
+  }
+}
+/**提取特定颜色到外部，方便外部定义时，可以覆盖里面的样式 */
+tr {
+  background-color: $--color-white;
+}
+.stripe {
+  &,.even {
+    background-color: $--table-row-even-background-color;
   }
 }
 // 列表配置样式popper
