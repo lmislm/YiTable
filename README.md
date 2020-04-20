@@ -3,7 +3,7 @@
 ## Installation
 
 ```sh
-$ [sudo] npm i yi-table
+$ npm i yi-table -S
 ```
 Next, you must register the component. The most common use case is to do that globally.
 
@@ -35,7 +35,9 @@ example
   <yi-table-column prop="birthday" label="生日"></yi-table-column>
 </yi-table>
 ```
+## TODO
 
+- [ ] `table 属性`tableRowClassName
 
 ## <span id="git-commit">Git Commit Guidelines</span> [↑Top](#top)
 
