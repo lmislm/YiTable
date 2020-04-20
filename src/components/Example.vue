@@ -10,6 +10,7 @@
         highlight-current-row
         align="left"
         ref="yitable"
+        cacheKey="testTable"
         @selection-change="handleSelection"
         :data="isOriginalData ? mockData : dataList"
       >
