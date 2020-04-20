@@ -24,7 +24,6 @@
     </div>
     <div class="yi-table__table-wrapper">
       <table
-        class="yi-table__table-wrapper"
         :class="[fullTableClass, align && `is-${align}`]"
         border="0"
         cellspacing="0"
