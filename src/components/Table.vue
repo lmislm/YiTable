@@ -75,7 +75,10 @@
       </table>
     </div>
     <slot />
-    <div class="yi-table__empty yi-table__empty-text" v-if="!showColumns.length && displayedRows.length && !hasShowColumn">
+    <div
+      class="yi-table__empty yi-table__empty-text"
+      v-if="!showColumns.length && displayedRows.length && !hasShowColumn"
+    >
       <slot name="empty-text">~</slot>
     </div>
     <div v-if="!displayedRows.length" class="yi-table__empty yi-table__empty-text">
@@ -494,25 +497,6 @@ $--popover-border-color: $--border-color-lighter;
 $--popover-padding: 12px;
 $--index-popper: 2000;
 
-.yi-popover {
-  position: absolute;
-  background: $--popover-background-color;
-  border-radius: 4px;
-  border: $--table-border;
-  padding: $--popover-padding;
-  z-index: $--index-popper;
-  color: $--color-text-regular;
-  line-height: 1.4;
-  text-align: justify;
-  font-size: $--popover-font-size;
-  box-shadow: $--box-shadow-light;
-  word-break: break-all;
-  .column-set {
-    display: flex;
-    flex-direction: column;
-  }
-}
-
 .yi-table {
   position: relative;
   box-sizing: border-box;
@@ -521,7 +505,6 @@ $--index-popper: 2000;
   background-color: $--color-white;
   font-size: 14px;
   color: $--table-font-color;
-  // overflow-y: auto;
   height: 100%;
   .yi-table-set {
     .table-icon {
@@ -542,9 +525,140 @@ $--index-popper: 2000;
       top: -20px;
     }
   }
+  .yi-table__head {
+    .yi-table__th--sort,
+    .yi-table__th--sort-desc,
+    .yi-table__th--sort-asc {
+      .cell {
+        cursor: pointer;
+      }
+    }
+    .yi-table__th--sort-desc {
+      .sort {
+        .ascend {
+          fill: $--background-icon-color;
+        }
+        .descend {
+          fill: $--theme-color;
+        }
+      }
+    }
+    .yi-table__th--sort-asc {
+      .sort {
+        .ascend {
+          fill: $--theme-color;
+        }
+        .descend {
+          fill: $--background-icon-color;
+        }
+      }
+    }
+  }
   .yi-table__table-wrapper {
     height: inherit;
     overflow-y: auto;
+    .yi-table__table {
+      width: 100%;
+      text-align: center;
+      .yi-table__body {
+        tr {
+          transition: background-color 0.25s ease;
+          &:hover {
+            background-color: $--table-row-hover-background-color;
+          }
+        }
+      }
+      .cell {
+        display: inline-block;
+        width: 100%;
+        box-sizing: border-box;
+        text-overflow: ellipsis;
+        white-space: normal;
+        word-break: break-all;
+        line-height: 23px;
+        padding-left: 10px;
+        padding-right: 10px;
+        .index,
+        .selection {
+          width: 55px;
+        }
+        .sort {
+          display: inline-flex;
+          flex-direction: column;
+          align-items: center;
+          vertical-align: middle;
+          cursor: pointer;
+          overflow: initial;
+          position: relative;
+          .yi-table-sort-icon {
+            width: 12px;
+            height: 12px;
+            fill: $--background-icon-color;
+            cursor: pointer;
+            &.ascend {
+              margin-top: -3px;
+              margin-bottom: -3px;
+            }
+            &.descend {
+              margin-top: -3px;
+            }
+          }
+        }
+      }
+      tr {
+        border-bottom: $--table-border;
+        background-color: $--color-white;
+        input[type='checkbox'] {
+          margin: 0;
+        }
+        &.high-light {
+          background-color: $--table-current-row-background-color;
+        }
+        .is-center {
+          text-align: center;
+        }
+        .is-left {
+          text-align: left;
+        }
+        .is-right {
+          text-align: right;
+        }
+      }
+      th,
+      td {
+        border-bottom: $--table-border;
+        border-bottom-width: 1px;
+        padding: 8px 0; // small
+        // padding: 6px 0; // mini
+        // padding: 10px 0; // medium
+        min-width: 0;
+        box-sizing: border-box;
+        text-overflow: ellipsis;
+        vertical-align: middle;
+        position: relative;
+      }
+      &.is-left {
+        text-align: left;
+      }
+      &.is-right {
+        text-align: right;
+      }
+      &.border {
+        border-left: $--table-border;
+        border-top: $--table-border;
+        th,
+        td {
+          border-right: $--table-border;
+        }
+      }
+      &.stripe {
+        & .yi-table__body {
+          & tr.even {
+            background: $--table-row-even-background-color;
+          }
+        }
+      }
+    }
   }
   .yi-table__empty {
     min-height: 60px;
@@ -555,133 +669,24 @@ $--index-popper: 2000;
     border-bottom: $--table-border;
     align-items: center;
   }
-  .border {
-    border-left: $--table-border;
-    border-top: $--table-border;
-    th,
-    td {
-      border-right: $--table-border;
-    }
-  }
-  .stripe {
-    & .yi-table__body {
-      & tr.even {
-        background: $--table-row-even-background-color;
-      }
-    }
-  }
-  .yi-table__table {
-    width: 100%;
-    text-align: center;
-    &.is-left {
-      text-align: left;
-    }
-    &.is-right {
-      text-align: right;
-    }
-    .yi-table__body {
-      tr {
-        transition: background-color 0.25s ease;
-        &:hover {
-          background-color: $--table-row-hover-background-color;
-        }
-      }
-    }
-  }
-  .cell {
-    display: inline-block;
-    width: 100%;
-    box-sizing: border-box;
-    text-overflow: ellipsis;
-    white-space: normal;
-    word-break: break-all;
-    line-height: 23px;
-    padding-left: 10px;
-    padding-right: 10px;
-    .index, .selection {
-      width: 55px;
-    }
-    .sort {
-      display: inline-flex;
-      flex-direction: column;
-      align-items: center;
-      vertical-align: middle;
-      cursor: pointer;
-      overflow: initial;
-      position: relative;
-      .yi-table-sort-icon {
-        width: 12px;
-        height: 12px;
-        fill: $--background-icon-color;
-        cursor: pointer;
-        &.ascend {
-          margin-top: -3px;
-          margin-bottom: -3px;
-        }
-        &.descend {
-          margin-top: -3px;
-        }
-      }
-    }
-  }
-  .yi-table__th--sort,
-  .yi-table__th--sort-desc,
-  .yi-table__th--sort-asc {
-    .cell {
-      cursor: pointer;
-    }
-  }
-  .yi-table__th--sort-desc {
-    .sort {
-      .ascend {
-        fill: $--background-icon-color;
-      }
-      .descend {
-        fill: $--theme-color;
-      }
-    }
-  }
-  .yi-table__th--sort-asc {
-    .sort {
-      .ascend {
-        fill: $--theme-color;
-      }
-      .descend {
-        fill: $--background-icon-color;
-      }
-    }
-  }
-  tr {
-    border-bottom: $--table-border;
-    background-color: $--color-white;
-    input[type="checkbox"] {
-      margin: 0;
-    }
-    &.high-light {
-      background-color: $--table-current-row-background-color;
-    }
-    .is-center {
-      text-align: center;
-    }
-    .is-left {
-      text-align: left;
-    }
-    .is-right {
-      text-align: right;
-    }
-  }
-  th,
-  td {
-    border-bottom: $--table-border;
-    border-bottom-width: 1px;
-    padding: 8px 0; // small
-    // padding: 6px 0; // mini
-    // padding: 10px 0; // medium
-    min-width: 0;
-    box-sizing: border-box;
-    text-overflow: ellipsis;
-    vertical-align: middle;
-    position: relative;
+}
+// 列表配置样式popper
+.yi-popover {
+  position: absolute;
+  background: $--popover-background-color;
+  border-radius: 4px;
+  border: $--table-border;
+  padding: $--popover-padding;
+  z-index: $--index-popper;
+  color: $--color-text-regular;
+  line-height: 1.4;
+  text-align: justify;
+  font-size: $--popover-font-size;
+  box-shadow: $--box-shadow-light;
+  word-break: break-all;
+  .column-set {
+    display: flex;
+    flex-direction: column;
   }
 }
 </style>
