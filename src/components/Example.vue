@@ -11,6 +11,7 @@
         align="left"
         ref="yitable"
         cacheKey="testTable"
+        :row-class-name="rowClassName"
         @selection-change="handleSelection"
         :data="isOriginalData ? mockData : dataList"
       >
@@ -151,6 +152,12 @@ export default {
         return true
       }
     },
+    rowClassName ({row, index}) {
+      console.log(row, index, 'row-class-name')
+      if (index === 2) {
+        return 'test-row'
+      }
+    },
     switchShowColumn () {
       this.isHiddenName = !this.isHiddenName
       console.log(this.isHiddenName)
@@ -168,6 +175,9 @@ export default {
   .table {
     flex: 1;
     height: 400px;
+  }
+  .test-row {
+    background-color: oldlace;
   }
 }
 .title {
