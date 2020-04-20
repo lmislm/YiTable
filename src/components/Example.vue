@@ -45,6 +45,10 @@
         <div class="title">选中行Selection：</div>
         {{ selectionRows }}
       </div>
+      <div class="selection">
+        <div class="title">切换状态</div>
+        <button @click="toggleSelection([mockData[1], mockData[3]])">切换第二行，第四行选中状态</button>
+      </div>
       <div class="opt">
         <div class="title">操作：</div>
         <button @click="switchFilter">展示过滤</button>
@@ -152,15 +156,23 @@ export default {
         return true
       }
     },
+    toggleSelection(rows) {
+      if (rows) {
+        rows.forEach(row => {
+          this.$refs.yitable.toggleRowSelection(row)
+        })
+      } else {
+        this.$refs.yitable.clearSelection()
+      }
+    },
     rowClassName ({row, index}) {
-      console.log(row, index, 'row-class-name')
+      console.log(row, 'rowClassName')
       if (index === 2) {
         return 'test-row'
       }
     },
     switchShowColumn () {
       this.isHiddenName = !this.isHiddenName
-      console.log(this.isHiddenName)
     }
   }
 }
