@@ -504,8 +504,8 @@ $--index-popper: 2000;
 
 /* Scrollbar
 --------------------------*/
-$--scrollbar-background-color: rgba($--color-text-secondary, .3);
-$--scrollbar-hover-background-color: rgba($--color-text-secondary, .5);
+$--scrollbar-background-color: rgba($--color-text-secondary, 0.3);
+$--scrollbar-hover-background-color: rgba($--color-text-secondary, 0.5);
 
 .yi-table {
   position: relative;
@@ -586,7 +586,7 @@ $--scrollbar-hover-background-color: rgba($--color-text-secondary, .5);
       cursor: pointer;
       border-radius: 4px;
       background-color: $--scrollbar-background-color;
-      transition: .3s background-color;
+      transition: 0.3s background-color;
       &:hover {
         background-color: $--scrollbar-hover-background-color;
       }
