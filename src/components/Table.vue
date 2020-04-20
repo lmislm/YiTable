@@ -24,6 +24,7 @@
     </div>
     <div class="yi-table__table-wrapper">
       <table
+        class="yi-table__table-wrapper"
         :class="[fullTableClass, align && `is-${align}`]"
         border="0"
         cellspacing="0"
@@ -483,7 +484,10 @@ $--background-color-base: #f5f7fa;
 $--background-color-even: #fafafa;
 $--background-icon-color: #c0c4cc;
 $--box-shadow-light: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+$--color-text-secondary: #909399;
 
+/* Table
+--------------------------*/
 $--table-border-color: $--border-color-lighter;
 $--table-font-color: $--color-text-regular;
 $--table-border: 1px solid $--table-border-color;
@@ -491,11 +495,18 @@ $--table-current-row-background-color: $--color-primary-light-1 !important;
 $--table-row-hover-background-color: $--background-color-base;
 $--table-row-even-background-color: $--background-color-even;
 
+/* Popover
+--------------------------*/
 $--popover-background-color: $--color-white;
 $--popover-font-size: $--font-size-base;
 $--popover-border-color: $--border-color-lighter;
 $--popover-padding: 12px;
 $--index-popper: 2000;
+
+/* Scrollbar
+--------------------------*/
+$--scrollbar-background-color: rgba($--color-text-secondary, .3);
+$--scrollbar-hover-background-color: rgba($--color-text-secondary, .5);
 
 .yi-table {
   position: relative;
@@ -557,6 +568,30 @@ $--index-popper: 2000;
   .yi-table__table-wrapper {
     height: inherit;
     overflow-y: auto;
+    &::-webkit-scrollbar {
+      position: absolute;
+      right: 2px;
+      bottom: 2px;
+      z-index: 1;
+      border-radius: 4px;
+      opacity: 0;
+      transition: opacity 120ms ease-out;
+      width: 6px;
+      top: 2px;
+    }
+    &::-webkit-scrollbar-thumb {
+      position: relative;
+      display: block;
+      width: 0;
+      height: 0;
+      cursor: pointer;
+      border-radius: 4px;
+      background-color: $--scrollbar-background-color;
+      transition: .3s background-color;
+      &:hover {
+        background-color: $--scrollbar-hover-background-color;
+      }
+    }
     .yi-table__table {
       width: 100%;
       text-align: center;
