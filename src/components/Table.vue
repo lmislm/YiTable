@@ -205,8 +205,12 @@ export default {
     displayedRows () {
       const isSelectable = this.hasTypeSelection(this.sortedRows)
       if (isSelectable) { // 是否禁用多选的某列
+        // 这个地方每次变动displayRows都会修改isSelectable为true,todo需要优化
         this.sortedRows.forEach(row => {
-          this.$set(row, 'isSelectable', true)
+          // TODO：这里又实现了一遍rowCell中的方法
+          const selectionCol = row.columns.find(col => col.prop === 'selection')
+          const isSelectable = selectionCol.selectable(row.data, row.index)
+          this.$set(row, 'isSelectable', isSelectable)
         })
       }
       if (this.highlightCurrentRow) {
@@ -356,9 +360,7 @@ export default {
     emitRowSelectClick (options) {
       // 优化这个options
       const selectRows = this.displayedRows.filter(row => !!row.isSelectable && !!row.isSelected)
-      console.log('emitRowSelectClick', selectRows)
-      const selection = (this.deleteProp(selectRows, 'isSelected') || [])
-        .map(row => row.data)
+      const selection = (this.deleteProp(selectRows, 'isSelected') || []).map(row => row.data)
       // 累计所有选中的数据的data，推入一个数组
       this.selection = cloneDeep(selection)
       this.setHeaderCheckboxStatus(options)
@@ -394,11 +396,14 @@ export default {
     },
     toggleRowSelection (rowData, isSelected) {
       const selected = !(isSelected)
-      const change = toggleRowStatus(this.selection, rowData, selected)
+      console.log('=========', this.selection)
+      const change = toggleRowStatus(cloneDeep(this.selection), rowData, selected)
+      console.log(change, 'clearSelection', this.selection, rowData, selected)
       if (change) {
         this.setRowSelectedStatus(this.displayedRows, rowData, selected)
+      } else {
+        console.log('change', change)
       }
-      // console.log(change, rowData, selected, 'toggleRowSelection')
     },
     setRowSelectedStatus (rows, rowData, status) {
       const rowDatas = rows.map(row => row.data)

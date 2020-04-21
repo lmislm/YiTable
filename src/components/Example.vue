@@ -132,7 +132,7 @@ export default {
     handleSelection (selection) {
       // 有bug
       this.selectionRows = selection
-      console.log(selection, 'example')
+      console.log(selection, selection.length, 'example')
     },
     deleteData () {
       this.dataList = this.mockData.slice(0, 4)

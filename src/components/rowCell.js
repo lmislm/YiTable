@@ -42,7 +42,7 @@ export default {
       component.componentOptions.propsData.row = props.row.data
       return component
     }
-    // TODO: 优化Function的判断
+    // TODO: 优化Function的判断，不应该这么判断，应该外部直接闭包执行或者其他
     if (!~['_default', 'default'].indexOf(props.column.formatter.name)) {
       data.domProps = {}
       data.domProps.innerHTML = props.column.formatter(
