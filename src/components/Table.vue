@@ -179,6 +179,7 @@ export default {
     },
     count: undefined,
     selection: [],
+    rowSelection: [],
     isAllSelected: false,
     isShowFilter: false,
     showColumns: [],
@@ -394,15 +395,15 @@ export default {
       this.isAllSelected = false
       this.$emit('selection-change', [])
     },
-    toggleRowSelection (rowData, isSelected) {
-      const selected = !(isSelected)
-      console.log('=========', this.selection)
-      const change = toggleRowStatus(cloneDeep(this.selection), rowData, selected)
-      console.log(change, 'clearSelection', this.selection, rowData, selected)
-      if (change) {
-        this.setRowSelectedStatus(this.displayedRows, rowData, selected)
-      } else {
-        console.log('change', change)
+    toggleRowSelection (rowData, selectStatus) {
+      // selectStatus 为空时，toggleRowSelection进行反选
+      const changeObj = toggleRowStatus(this.rowSelection, rowData, selectStatus)
+      if (changeObj.isChanged) {
+        this.setRowSelectedStatus(
+          this.displayedRows,
+          changeObj.rowData,
+          (typeof selectStatus !== 'boolean') ? changeObj.isAdd : selectStatus
+        )
       }
     },
     setRowSelectedStatus (rows, rowData, status) {
@@ -413,7 +414,7 @@ export default {
           this.$set(row, 'isSelected', status)
         }
       })
-      this.emitRowSelectClick({isAll: false})
+      this.emitRowSelectClick({ isAll: false })
     },
     setCurrentRow (rowData) {
       if (this.highlightCurrentRow) {
@@ -712,7 +713,8 @@ tr {
   background-color: $--color-white;
 }
 .stripe {
-  &,.even {
+  &,
+  .even {
     background-color: $--table-row-even-background-color;
   }
 }
