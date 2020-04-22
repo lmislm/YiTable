@@ -125,8 +125,8 @@ export default {
       type: String,
       default: ''
     },
-    showFilter: Boolean,
-    cacheKey: {
+    showFilter: Boolean, // 外部控制是否展示过滤的那一行
+    cacheKey: { // 表格的key值
       type: String,
       default: null,
     },
@@ -166,7 +166,8 @@ export default {
     showOption: {
       type: Boolean,
       default: true
-    }
+    },
+    summaryMethod: Function
   },
 
   data: () => ({
