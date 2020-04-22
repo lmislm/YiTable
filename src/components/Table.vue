@@ -363,7 +363,7 @@ export default {
       const selectRows = this.displayedRows.filter(row => !!row.isSelectable && !!row.isSelected)
       const selection = (this.deleteProp(selectRows, 'isSelected') || []).map(row => row.data)
       // 累计所有选中的数据的data，推入一个数组
-      this.selection = cloneDeep(selection)
+      this.selection = selection.slice()
       this.setHeaderCheckboxStatus(options)
       this.$emit('selection-change', this.selection)
     },
