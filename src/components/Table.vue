@@ -324,9 +324,6 @@ export default {
     await this.mapDataToRows()
   },
   methods: {
-    async pageChange () {
-      await this.mapDataToRows()
-    },
     async mapDataToRows () {
       const data = this.prepareLocalData()
       this.rows = data.map((rowData, rowIndex) => new Row(rowData, this.columns, rowIndex))
