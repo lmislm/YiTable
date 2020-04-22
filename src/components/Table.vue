@@ -406,6 +406,17 @@ export default {
         )
       }
     },
+    toggleAllSelection () {
+      // 清空选中特定行的状态
+      this.rowSelection = []
+      // 切换所有行的选中状态
+      // TODO: 可以优化遍历嘛，这里内层有好几个forEach
+      const rowDatas = this.displayedRows
+      this.toggleAllStatus = !this.toggleAllStatus
+      rowDatas.forEach(row => {
+        this.setRowSelectedStatus(this.displayedRows, row.data, this.toggleAllStatus)
+      })
+    },
     setRowSelectedStatus (rows, rowData, status) {
       const rowDatas = rows.map(row => row.data)
       const index = rowDatas.indexOf(rowData)
