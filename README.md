@@ -40,7 +40,7 @@ example
 - [ ] 详细文档
 - [x] `table 属性`row-class-name
 - [ ] `table-column 属性`show-overflow-tooltip
-- [ ] `table的内部方法，通过ref引用`toggleRowSelection
+- [x] `table的内部方法，通过ref引用`toggleRowSelection
 
 ## <span id="git-commit">Git Commit Guidelines</span> [↑Top](#top)
 
