@@ -204,16 +204,13 @@ export default {
       return Array.isArray(this.data)
     },
     displayedRows () {
-      const isSelectable = this.hasTypeSelection(this.sortedRows)
-      if (isSelectable) { // 是否禁用多选的某列
-        // 这个地方每次变动displayRows都会修改isSelectable为true,todo需要优化
-        this.sortedRows.forEach(row => {
-          // TODO：这里又实现了一遍rowCell中的方法
-          const selectionCol = row.columns.find(col => col.prop === 'selection')
-          const isSelectable = selectionCol.selectable(row.data, row.index)
-          this.$set(row, 'isSelectable', isSelectable)
-        })
-      }
+      // 这个地方每次变动displayRows都会修改isSelectable为true,todo需要优化
+      this.sortedRows.forEach(row => {
+        // TODO：这里又实现了一遍rowCell中的方法
+        const selectionCol = row.columns.find(col => col.type === 'selection')
+        const isSelectable = selectionCol.selectable && selectionCol.selectable(row.data, row.index)
+        this.$set(row, 'isSelectable', isSelectable)
+      })
       if (this.highlightCurrentRow) {
         this.sortedRows.forEach(row => {
           this.$set(row, 'isHighLight', false)
@@ -478,15 +475,6 @@ export default {
         delete newRow[prop]
         return newRow
       })
-    },
-    hasTypeSelection (rows) {
-      const columnsList = (rows || []).map(item => item.columns)
-      if (columnsList) {
-        const columns = columnsList[0] || []
-        const selections = columns.find(col => col.type === 'selection')
-        return !!selections
-      }
-      return false
     }
   }
 }
