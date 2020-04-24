@@ -479,9 +479,14 @@ export default {
         return newRow
       })
     },
-    hasTypeSelection (columns) {
-      const selections = columns.find(col => col.type === 'selection')
-      return !!selections
+    hasTypeSelection (rows) {
+      const columnsList = (rows || []).map(item => item.columns)
+      if (columnsList) {
+        const columns = columnsList[0] || []
+        const selections = columns.find(col => col.type === 'selection')
+        return !!selections
+      }
+      return false
     }
   }
 }
