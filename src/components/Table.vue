@@ -530,6 +530,9 @@ $--scrollbar-hover-background-color: rgba($--color-text-secondary, 0.5);
   font-size: 14px;
   color: $--table-font-color;
   height: 100%;
+  border-top: $--table-border;
+  border-bottom: $--table-border;
+  border-right: $--table-border;
   .yi-table-set {
     .table-icon {
       width: 18px;
@@ -608,6 +611,7 @@ $--scrollbar-hover-background-color: rgba($--color-text-secondary, 0.5);
     .yi-table__table {
       width: 100%;
       text-align: center;
+      margin-left: 1px;
       .yi-table__body {
         tr {
           transition: background-color 0.25s ease;
@@ -693,10 +697,12 @@ $--scrollbar-hover-background-color: rgba($--color-text-secondary, 0.5);
       }
       &.border {
         border-left: $--table-border;
-        border-top: $--table-border;
         th,
         td {
           border-right: $--table-border;
+          // &:last-child {
+          //   border-right: none; 
+          // }
         }
       }
       // &.stripe {
