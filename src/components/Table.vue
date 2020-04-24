@@ -480,8 +480,8 @@ export default {
       })
     },
     hasTypeSelection (columns) {
-      const selections = columns.map(col => col.type === 'selection')
-      return selections.length !== 0
+      const selections = columns.find(col => col.type === 'selection')
+      return !!selections
     }
   }
 }
