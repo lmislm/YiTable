@@ -44,6 +44,7 @@ export default {
   },
   methods: {
     setTrRowClassName () {
+      if (!this.rowClassName) return
       if (this.isString(this.rowClassName)) {
         return this.rowClassName
       }
