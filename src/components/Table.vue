@@ -1,6 +1,6 @@
 <template>
   <div class="yi-table">
-    <div class="yi-table-set right-bottom outside" v-if="showOption">
+    <div class="yi-table-set right-bottom" :class="{'outside': !inside}" v-if="showOption">
       <span @click="isShowFilter = !isShowFilter">
         <slot name="filter-icon">
           <yi-table-icon icon="yi-table-filter" class="table-icon filter"></yi-table-icon>
@@ -166,7 +166,8 @@ export default {
     showOption: {
       type: Boolean,
       default: true
-    }
+    },
+    inside: Boolean
   },
 
   data: () => ({
