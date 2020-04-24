@@ -42,6 +42,8 @@ example
 - [x] `table 属性`row-class-name
 - [ ] `table-column 属性`show-overflow-tooltip
 - [x] `table的内部方法，通过ref引用`toggleRowSelection
+- [ ]  默认type为index和selection的列宽度为55
+- [ ]  `table-column`的`slot-scope="scope"`可以不需要给
 
 ## Example
 
