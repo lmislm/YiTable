@@ -30,18 +30,23 @@ export function range(from, to) {
 }
 
 export function toggleRowStatus(statusArr, row, newVal) {
-  let changed = false
+  let isChanged = false
+  let isAdd = false
+  
   const index = statusArr.indexOf(row)
   const included = index !== -1
 
   const addRow = () => {
     statusArr.push(row)
-    changed = true
+    isChanged = true
+    isAdd = true
   }
   const removeRow = () => {
     statusArr.splice(index, 1)
-    changed = true
+    isChanged = true
+    isAdd = false
   }
+
   if (typeof newVal === 'boolean') {
     if (newVal && !included) {
       addRow()
@@ -55,5 +60,5 @@ export function toggleRowStatus(statusArr, row, newVal) {
       addRow()
     }
   }
-  return changed
+  return { isChanged, isAdd, rowData: row }
 }

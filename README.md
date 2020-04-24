@@ -3,7 +3,7 @@
 ## Installation
 
 ```sh
-$ [sudo] npm i yi-table
+$ npm i yi-table -S
 ```
 
 Next, you must register the component. The most common use case is to do that globally.
@@ -36,7 +36,12 @@ example
   <yi-table-column prop="birthday" label="生日"></yi-table-column>
 </yi-table>
 ```
+## TODO
 
+- [ ] 详细文档
+- [x] `table 属性`row-class-name
+- [ ] `table-column 属性`show-overflow-tooltip
+- [x] `table的内部方法，通过ref引用`toggleRowSelection
 
 ## Example
 

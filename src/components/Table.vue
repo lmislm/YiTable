@@ -1,9 +1,9 @@
 <template>
   <div class="yi-table">
-    <div class="table-set right-bottom">
+    <div class="yi-table-set right-bottom outside" v-if="showOption">
       <span @click="isShowFilter = !isShowFilter">
         <slot name="filter-icon">
-          <yi-table-icon icon="yi-table-filter" class="table-icon"></yi-table-icon>
+          <yi-table-icon icon="yi-table-filter" class="table-icon filter"></yi-table-icon>
         </slot>
       </span>
       <yi-popover trigger="click" :options="{ placement: 'bottom' }" append-to-body>
@@ -17,7 +17,7 @@
         </div>
         <span slot="reference">
           <slot name="option-icon">
-            <yi-table-icon icon="yi-table-option" class="table-icon"></yi-table-icon>
+            <yi-table-icon icon="yi-table-option" class="table-icon option"></yi-table-icon>
           </slot>
         </span>
       </yi-popover>
@@ -63,7 +63,7 @@
               :key="index"
               :row="row"
               :index="index"
-              :class="[index%2 == 1 ? 'even' : '', row.isHighLight ? 'high-light' : '']"
+              :row-class-name="rowClassName"
               :columns="columns"
               @rowSelect="emitRowSelectClick"
               @row-click="rowClick"
@@ -75,7 +75,10 @@
       </table>
     </div>
     <slot />
-    <div class="yi-table__empty yi-table__empty-text" v-if="!showColumns.length && displayedRows.length && !hasShowColumn">
+    <div
+      class="yi-table__empty yi-table__empty-text"
+      v-if="!showColumns.length && displayedRows.length && !hasShowColumn"
+    >
       <slot name="empty-text">~</slot>
     </div>
     <div v-if="!displayedRows.length" class="yi-table__empty yi-table__empty-text">
@@ -149,6 +152,7 @@ export default {
     },
     stripe: Boolean,
     border: Boolean,
+    rowClassName: [String, Function],
     maxHeight: [String, Number],
     showHeader: {
       type: Boolean,
@@ -158,7 +162,11 @@ export default {
       type: String,
       default: ''
     },
-    highlightCurrentRow: Boolean
+    highlightCurrentRow: Boolean,
+    showOption: {
+      type: Boolean,
+      default: true
+    }
   },
 
   data: () => ({
@@ -171,6 +179,7 @@ export default {
     },
     count: undefined,
     selection: [],
+    rowSelection: [],
     isAllSelected: false,
     isShowFilter: false,
     showColumns: [],
@@ -196,9 +205,13 @@ export default {
     },
     displayedRows () {
       const isSelectable = this.hasTypeSelection(this.sortedRows)
-      if (isSelectable) {
+      if (isSelectable) { // 是否禁用多选的某列
+        // 这个地方每次变动displayRows都会修改isSelectable为true,todo需要优化
         this.sortedRows.forEach(row => {
-          this.$set(row, 'isSelectable', true)
+          // TODO：这里又实现了一遍rowCell中的方法
+          const selectionCol = row.columns.find(col => col.prop === 'selection')
+          const isSelectable = selectionCol.selectable(row.data, row.index)
+          this.$set(row, 'isSelectable', isSelectable)
         })
       }
       if (this.highlightCurrentRow) {
@@ -225,18 +238,14 @@ export default {
       if (!sortColumn) {
         return this.rows
       }
-      // 深拷贝，JSON.parse方法会有函数循环限制
       // slice makes a copy of the array, instead of mutating the orginal
       const rowsCopy = cloneDeep(this.rows)
       const sorted = rowsCopy.sort(sortColumn.getSortPredicate(this.sort.order, this.columns))
       return sorted
     },
     storageKey () {
-      // 没有cacheKey根据URL路径来判断表格
-      const storageWithCacheKey = `yi-table_${window.location.pathname}${this.cacheKey}`
-      // 是否要根据host来确定，${window.location.host}
-      const storageWithoutCacheKey = `yi-table_${window.location.pathname}`
-      return this.cacheKey ? storageWithCacheKey : storageWithoutCacheKey
+      // 根据业务cacheKey来缓存cache名，TODO: 处理异常
+      return this.cacheKey || ''
     }
   },
   watch: {
@@ -315,9 +324,6 @@ export default {
     await this.mapDataToRows()
   },
   methods: {
-    async pageChange () {
-      await this.mapDataToRows()
-    },
     async mapDataToRows () {
       const data = this.prepareLocalData()
       this.rows = data.map((rowData, rowIndex) => new Row(rowData, this.columns, rowIndex))
@@ -350,11 +356,11 @@ export default {
       this.$emit('row-click', row.data)
     },
     emitRowSelectClick (options) {
-      const selectRows = this.displayedRows.filter(row => !!row.isSelected && !!row.isSelectable)
-      const selection = (this.deleteProp(selectRows, 'isSelected') || [])
-        .map(row => row.data)
+      // 优化这个options
+      const selectRows = this.displayedRows.filter(row => !!row.isSelectable && !!row.isSelected)
+      const selection = (this.deleteProp(selectRows, 'isSelected') || []).map(row => row.data)
       // 累计所有选中的数据的data，推入一个数组
-      this.selection = cloneDeep(selection)
+      this.selection = selection.slice()
       this.setHeaderCheckboxStatus(options)
       this.$emit('selection-change', this.selection)
     },
@@ -386,26 +392,37 @@ export default {
       this.isAllSelected = false
       this.$emit('selection-change', [])
     },
-    testRowSelect () {
-      console.log(this.selection, 'slice()')
-      this.toggleRowSelection(this.displayedRows[2].data, true)
-    },
-    toggleRowSelection (row, isSelected) {
-      const change = toggleRowStatus(this.selection, row, isSelected)
-      if (change) {
-        // this.setRowSelectedStatus(this.displayedRows, row, isSelected)
-        // console.log(this.selection, 'selection, toggleRow', this.displayedRows)
+    toggleRowSelection (rowData, selectStatus) {
+      // selectStatus 为空时，toggleRowSelection进行反选
+      const changeObj = toggleRowStatus(this.rowSelection, rowData, selectStatus)
+      if (changeObj.isChanged) {
+        this.setRowSelectedStatus(
+          this.displayedRows,
+          changeObj.rowData,
+          (typeof selectStatus !== 'boolean') ? changeObj.isAdd : selectStatus
+        )
       }
-      console.log(change)
     },
-    setRowSelectedStatus (rows, row, status) {
-      const index = rows.indexOf(row)
-      // rows[index].isSelected = status
+    toggleAllSelection () {
+      // 清空选中特定行的状态
+      this.rowSelection = []
+      // 切换所有行的选中状态
+      // TODO: 可以优化遍历嘛，这里内层有好几个forEach
+      const rowDatas = this.displayedRows
+      this.toggleAllStatus = !this.toggleAllStatus
+      rowDatas.forEach(row => {
+        this.setRowSelectedStatus(this.displayedRows, row.data, this.toggleAllStatus)
+      })
+    },
+    setRowSelectedStatus (rows, rowData, status) {
+      const rowDatas = rows.map(row => row.data)
+      const index = rowDatas.indexOf(rowData)
       rows.forEach((row, i) => {
         if (i === index) {
-          row.isSelected = status
+          this.$set(row, 'isSelected', status)
         }
       })
+      this.emitRowSelectClick({ isAll: false })
     },
     setCurrentRow (rowData) {
       if (this.highlightCurrentRow) {
@@ -424,6 +441,7 @@ export default {
       const cachedObj = expiringStorage.get(CACHE_NAME)
       // 当前表格新的数据
       const tableKey = this.storageKey
+      if (!tableKey) return
       const tablePropsValue = this.columnProps
         .filter(col => ~this.showColumns.indexOf(col.prop))
         .map(col => col.prop)
@@ -479,7 +497,10 @@ $--background-color-base: #f5f7fa;
 $--background-color-even: #fafafa;
 $--background-icon-color: #c0c4cc;
 $--box-shadow-light: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+$--color-text-secondary: #909399;
 
+/* Table
+--------------------------*/
 $--table-border-color: $--border-color-lighter;
 $--table-font-color: $--color-text-regular;
 $--table-border: 1px solid $--table-border-color;
@@ -487,12 +508,226 @@ $--table-current-row-background-color: $--color-primary-light-1 !important;
 $--table-row-hover-background-color: $--background-color-base;
 $--table-row-even-background-color: $--background-color-even;
 
+/* Popover
+--------------------------*/
 $--popover-background-color: $--color-white;
 $--popover-font-size: $--font-size-base;
 $--popover-border-color: $--border-color-lighter;
 $--popover-padding: 12px;
 $--index-popper: 2000;
 
+/* Scrollbar
+--------------------------*/
+$--scrollbar-background-color: rgba($--color-text-secondary, 0.3);
+$--scrollbar-hover-background-color: rgba($--color-text-secondary, 0.5);
+
+.yi-table {
+  position: relative;
+  overflow-y: auto;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  background-color: $--color-white;
+  font-size: 14px;
+  color: $--table-font-color;
+  height: 100%;
+  .yi-table-set {
+    .table-icon {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      fill: $--color-text-regular;
+      &.filter {
+        margin-right: 5px;
+      }
+    }
+    &.right-bottom {
+      position: absolute;
+      right: 0;
+      z-index: 1;
+    }
+    &.outside {
+      top: -20px;
+    }
+  }
+  .yi-table__head {
+    .yi-table__th--sort,
+    .yi-table__th--sort-desc,
+    .yi-table__th--sort-asc {
+      .cell {
+        cursor: pointer;
+      }
+    }
+    .yi-table__th--sort-desc {
+      .sort {
+        .ascend {
+          fill: $--background-icon-color;
+        }
+        .descend {
+          fill: $--theme-color;
+        }
+      }
+    }
+    .yi-table__th--sort-asc {
+      .sort {
+        .ascend {
+          fill: $--theme-color;
+        }
+        .descend {
+          fill: $--background-icon-color;
+        }
+      }
+    }
+  }
+  .yi-table__table-wrapper {
+    height: inherit;
+    overflow-y: auto;
+    &::-webkit-scrollbar {
+      position: absolute;
+      right: 2px;
+      bottom: 2px;
+      z-index: 1;
+      border-radius: 4px;
+      opacity: 0;
+      transition: opacity 120ms ease-out;
+      width: 6px;
+      top: 2px;
+    }
+    &::-webkit-scrollbar-thumb {
+      position: relative;
+      display: block;
+      width: 0;
+      height: 0;
+      cursor: pointer;
+      border-radius: 4px;
+      background-color: $--scrollbar-background-color;
+      transition: 0.3s background-color;
+      &:hover {
+        background-color: $--scrollbar-hover-background-color;
+      }
+    }
+    .yi-table__table {
+      width: 100%;
+      text-align: center;
+      .yi-table__body {
+        tr {
+          transition: background-color 0.25s ease;
+          &:hover {
+            background-color: $--table-row-hover-background-color;
+          }
+        }
+      }
+      .cell {
+        display: inline-block;
+        width: 100%;
+        box-sizing: border-box;
+        text-overflow: ellipsis;
+        white-space: normal;
+        word-break: break-all;
+        line-height: 23px;
+        padding-left: 10px;
+        padding-right: 10px;
+        .index,
+        .selection {
+          width: 55px;
+        }
+        .sort {
+          display: inline-flex;
+          flex-direction: column;
+          align-items: center;
+          vertical-align: middle;
+          cursor: pointer;
+          overflow: initial;
+          position: relative;
+          .yi-table-sort-icon {
+            width: 12px;
+            height: 12px;
+            fill: $--background-icon-color;
+            cursor: pointer;
+            &.ascend {
+              margin-top: -3px;
+              margin-bottom: -3px;
+            }
+            &.descend {
+              margin-top: -3px;
+            }
+          }
+        }
+      }
+      tr {
+        border-bottom: $--table-border;
+        // background-color: $--color-white;
+        input[type='checkbox'] {
+          margin: 0;
+        }
+        &.high-light {
+          background-color: $--table-current-row-background-color;
+        }
+        .is-center {
+          text-align: center;
+        }
+        .is-left {
+          text-align: left;
+        }
+        .is-right {
+          text-align: right;
+        }
+      }
+      th,
+      td {
+        border-bottom: $--table-border;
+        border-bottom-width: 1px;
+        padding: 8px 0; // small
+        // padding: 6px 0; // mini
+        // padding: 10px 0; // medium
+        min-width: 0;
+        box-sizing: border-box;
+        text-overflow: ellipsis;
+        vertical-align: middle;
+        position: relative;
+      }
+      &.is-left {
+        text-align: left;
+      }
+      &.is-right {
+        text-align: right;
+      }
+      &.border {
+        border-left: $--table-border;
+        border-top: $--table-border;
+        th,
+        td {
+          border-right: $--table-border;
+        }
+      }
+      // &.stripe {
+      //   &,.even {
+      //     background-color: $--table-row-even-background-color;
+      //   }
+      // }
+    }
+  }
+  .yi-table__empty {
+    min-height: 60px;
+    display: flex;
+    justify-content: center;
+    border-left: $--table-border;
+    border-right: $--table-border;
+    border-bottom: $--table-border;
+    align-items: center;
+  }
+}
+/**提取特定颜色到外部，方便外部定义时，可以覆盖里面的样式 */
+tr {
+  background-color: $--color-white;
+}
+.stripe {
+  &,
+  .even {
+    background-color: $--table-row-even-background-color;
+  }
+}
+// 列表配置样式popper
 .yi-popover {
   position: absolute;
   background: $--popover-background-color;
@@ -509,166 +744,6 @@ $--index-popper: 2000;
   .column-set {
     display: flex;
     flex-direction: column;
-  }
-}
-
-.yi-table {
-  position: relative;
-  overflow-y: auto;
-  box-sizing: border-box;
-  width: 100%;
-  max-width: 100%;
-  background-color: $--color-white;
-  font-size: 14px;
-  color: $--table-font-color;
-  .table-set {
-    .table-icon {
-      width: 16px;
-      height: 16px;
-      cursor: pointer;
-      fill: $--color-text-regular;
-    }
-    &.right-bottom {
-      position: absolute;
-      right: 0;
-      z-index: 1;
-    }
-  }
-  .yi-table__empty {
-    min-height: 60px;
-    display: flex;
-    justify-content: center;
-    border-left: $--table-border;
-    border-right: $--table-border;
-    border-bottom: $--table-border;
-    align-items: center;
-  }
-  .border {
-    border-left: $--table-border;
-    border-top: $--table-border;
-    th,
-    td {
-      border-right: $--table-border;
-    }
-  }
-  .stripe {
-    & .yi-table__body {
-      & tr.even {
-        background: $--table-row-even-background-color;
-      }
-    }
-  }
-  .yi-table__table {
-    width: 100%;
-    text-align: center;
-    &.is-left {
-      text-align: left;
-    }
-    &.is-right {
-      text-align: right;
-    }
-    .yi-table__body {
-      tr {
-        transition: background-color 0.25s ease;
-        &:hover {
-          background-color: $--table-row-hover-background-color;
-        }
-      }
-    }
-  }
-  .cell {
-    display: inline-block;
-    width: 100%;
-    box-sizing: border-box;
-    text-overflow: ellipsis;
-    white-space: normal;
-    word-break: break-all;
-    line-height: 23px;
-    padding-left: 10px;
-    padding-right: 10px;
-    .index, .selection {
-      width: 55px;
-    }
-    .sort {
-      display: inline-flex;
-      flex-direction: column;
-      align-items: center;
-      vertical-align: middle;
-      cursor: pointer;
-      overflow: initial;
-      position: relative;
-      .yi-table-sort-icon {
-        width: 12px;
-        height: 12px;
-        fill: $--background-icon-color;
-        cursor: pointer;
-        &.ascend {
-          margin-bottom: -3px;
-        }
-        &.descend {
-          margin-top: -3px;
-        }
-      }
-    }
-  }
-  .yi-table__th--sort,
-  .yi-table__th--sort-desc,
-  .yi-table__th--sort-asc {
-    .cell {
-      cursor: pointer;
-    }
-  }
-  .yi-table__th--sort-desc {
-    .sort {
-      .ascend {
-        fill: $--background-icon-color;
-      }
-      .descend {
-        fill: $--theme-color;
-      }
-    }
-  }
-  .yi-table__th--sort-asc {
-    .sort {
-      .ascend {
-        fill: $--theme-color;
-      }
-      .descend {
-        fill: $--background-icon-color;
-      }
-    }
-  }
-  tr {
-    border-bottom: $--table-border;
-    background-color: $--color-white;
-    input[type="checkbox"] {
-      margin: 0;
-    }
-    &.high-light {
-      background-color: $--table-current-row-background-color;
-    }
-    .is-center {
-      text-align: center;
-    }
-    .is-left {
-      text-align: left;
-    }
-    .is-right {
-      text-align: right;
-    }
-  }
-  th,
-  td {
-    border-bottom: $--table-border;
-    border-bottom-width: 1px;
-    padding: 8px 0; // small
-    // padding: 6px 0; // mini
-    // padding: 10px 0; // medium
-    min-width: 0;
-    box-sizing: border-box;
-    text-overflow: ellipsis;
-    vertical-align: middle;
-    position: relative;
   }
 }
 </style>
