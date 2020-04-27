@@ -44,6 +44,7 @@ example
 - [ ]  默认type为index和selection的列宽度为55
 - [ ]  `table-column`的`slot-scope="scope"`可以不需要给
 - [ ] `table的border和stripe属性默认为**true**`
+- [ ] `多选框样式统一成element-ui样式`
 
 ## <span id="git-commit">Git Commit Guidelines</span> [↑Top](#top)
 
