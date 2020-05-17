@@ -546,7 +546,9 @@ $--scrollbar-hover-background-color: rgba($--color-text-secondary, 0.5);
   font-size: 14px;
   color: $--table-font-color;
   height: 100%;
+  overflow-y: unset;
   .yi-table-set {
+    user-select: none;
     .table-icon {
       width: 18px;
       height: 18px;
