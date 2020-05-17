@@ -77,7 +77,7 @@ export default {
       if (isColumnSelection) {
         return children // slots().default
       } else {
-        return props.row.getValue(props.column.prop) || ''
+        return props.row.getValue(props.column.prop)
       }
     })()
     return createElement('td', data, [

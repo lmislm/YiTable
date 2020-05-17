@@ -7,7 +7,7 @@ export default class Row {
     this.index = index
   }
   getValue(columnName) {
-    return get(this.data, columnName)
+    return get(this.data, columnName || 'empty')
   }
   getColumn(columnName) {
     return this.columns.find(column => column.prop === columnName)
