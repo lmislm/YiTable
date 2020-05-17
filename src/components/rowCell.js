@@ -66,6 +66,12 @@ export default {
       const isColumnIndex = columnType && columnType === 'index'
       const isColumnSelection = columnType && columnType === 'selection'
       const isRealColumnIndex = true // options
+      // 设置默认宽度
+      if (!props.column.width && (isColumnIndex || isColumnSelection)) {
+        data.style = {
+          width: '55px'
+        }
+      }
       if (isColumnIndex) {
         // 真实id还是实时的index, 实时id:props.index,真实index:props.row.index
         if (isRealColumnIndex) {
