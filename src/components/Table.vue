@@ -9,10 +9,12 @@
       <yi-popover trigger="click" :options="{ placement: 'bottom' }" append-to-body>
         <div class="yi-popover popper">
           <div class="column-set">
-            <label :key="i" v-for="(item, i) in columnProps">
-              <input type="checkbox" v-model="item.show" :value="item.label" :id="item.label" />
-              {{item.label}}
-            </label>
+            <checkbox
+              :key="i"
+              v-for="(item, i) in columnProps"
+              v-model="item.show"
+              :id="item.label"
+            >{{item.label}}</checkbox>
           </div>
         </div>
         <span slot="reference">
@@ -39,12 +41,11 @@
               :column="column"
               @click="changeSorting"
             >
-              <input
-                slot="selection"
-                type="checkbox"
-                v-model="isAllSelected"
-                :indeterminate.prop="allSelectedIndeterminate"
-              />
+            <checkbox
+              slot="selection"
+              v-model="isAllSelected"
+              :indeterminate="allSelectedIndeterminate"
+            ></checkbox>
             </table-column-header>
           </tr>
           <tr v-show="showFilter || isShowFilter">
@@ -92,10 +93,12 @@ import Column from '../classes/Column'
 import Row from '../classes/Row'
 import TableColumnHeader from './TableColumnHeader'
 import TableRow from './TableRow'
+import Checkbox from './Checkbox.vue'
 import { classList, toggleRowStatus } from '../utils'
 import cloneDeep from 'lodash.clonedeep'
 import expiringStorage from '../utils/expiring-storage'
 import YiTableIcon from '@/components/YiTableIcon'
+
 
 import YiPopover from './PopoverJs'
 
@@ -106,7 +109,8 @@ export default {
     YiPopover,
     TableColumnHeader,
     TableRow,
-    YiTableIcon
+    YiTableIcon,
+    Checkbox
   },
   props: {
     data: {
