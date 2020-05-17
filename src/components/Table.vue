@@ -1,23 +1,25 @@
 <template>
   <div class="yi-table">
     <div class="yi-table-set right-bottom" :class="{'outside': !inside}" v-if="showOption">
-      <span @click="isShowFilter = !isShowFilter">
+      <span @click="onShowFilter" :class="['yi-filter', { 'is-show': isShowFilter }]">
         <slot name="filter-icon">
-          <yi-table-icon icon="yi-table-filter" class="table-icon filter"></yi-table-icon>
+          <yi-table-icon icon="yi-table-filter" class-name="table-icon filter" :class="{ 'is-show': isShowFilter }"></yi-table-icon>
         </slot>
       </span>
-      <yi-popover trigger="click" :options="{ placement: 'bottom' }" append-to-body>
-        <div class="yi-popover popper">
+      <yi-popover trigger="click" :options="{ placement: 'bottom' }" append-to-body @show="handlePopoverShow" @hide="handlePopoverHide">
+        <div :class="['yi-popover popper', { 'is-show': isPopoverShow }]">
           <div class="column-set">
-            <label :key="i" v-for="(item, i) in columnProps">
-              <input type="checkbox" v-model="item.show" :value="item.label" :id="item.label" />
-              {{item.label}}
-            </label>
+            <checkbox
+              :key="i"
+              v-for="(item, i) in columnProps"
+              v-model="item.show"
+              :id="item.label"
+            >{{item.label}}</checkbox>
           </div>
         </div>
         <span slot="reference">
           <slot name="option-icon">
-            <yi-table-icon icon="yi-table-option" class="table-icon option"></yi-table-icon>
+            <yi-table-icon icon="yi-table-option" class-name="table-icon option" :class="{ 'is-show': isPopoverShow }"></yi-table-icon>
           </slot>
         </span>
       </yi-popover>
@@ -39,12 +41,11 @@
               :column="column"
               @click="changeSorting"
             >
-              <input
-                slot="selection"
-                type="checkbox"
-                v-model="isAllSelected"
-                :indeterminate.prop="allSelectedIndeterminate"
-              />
+            <checkbox
+              slot="selection"
+              v-model="isAllSelected"
+              :indeterminate="allSelectedIndeterminate"
+            ></checkbox>
             </table-column-header>
           </tr>
           <tr v-show="showFilter || isShowFilter">
@@ -92,10 +93,12 @@ import Column from '../classes/Column'
 import Row from '../classes/Row'
 import TableColumnHeader from './TableColumnHeader'
 import TableRow from './TableRow'
+import Checkbox from './Checkbox.vue'
 import { classList, toggleRowStatus } from '../utils'
 import cloneDeep from 'lodash.clonedeep'
 import expiringStorage from '../utils/expiring-storage'
 import YiTableIcon from '@/components/YiTableIcon'
+
 
 import YiPopover from './PopoverJs'
 
@@ -106,7 +109,8 @@ export default {
     YiPopover,
     TableColumnHeader,
     TableRow,
-    YiTableIcon
+    YiTableIcon,
+    Checkbox
   },
   props: {
     data: {
@@ -150,8 +154,14 @@ export default {
       type: Function,
       default: () => ''
     },
-    stripe: Boolean,
-    border: Boolean,
+    stripe: {
+      type: Boolean,
+      default: true
+    },
+    border: {
+      type: Boolean,
+      default: true
+    },
     rowClassName: [String, Function],
     maxHeight: [String, Number],
     showHeader: {
@@ -186,7 +196,8 @@ export default {
     showColumns: [],
     hasShowColumn: false,
     columnProps: [],
-    allSelectedIndeterminate: false
+    allSelectedIndeterminate: false,
+    isPopoverShow: false
   }),
 
   computed: {
@@ -209,7 +220,7 @@ export default {
       this.sortedRows.forEach(row => {
         // TODO：这里又实现了一遍rowCell中的方法
         const selectionCol = row.columns.find(col => col.type === 'selection')
-        const isSelectable = selectionCol.selectable && selectionCol.selectable(row.data, row.index)
+        const isSelectable = selectionCol && selectionCol.selectable && selectionCol.selectable(row.data, row.index)
         this.$set(row, 'isSelectable', isSelectable)
       })
       if (this.highlightCurrentRow) {
@@ -476,6 +487,16 @@ export default {
         delete newRow[prop]
         return newRow
       })
+    },
+    onShowFilter () {
+      this.isShowFilter = !this.isShowFilter
+      this.$emit('filter', this.isShowFilter)
+    },
+    handlePopoverShow () {
+      this.isPopoverShow = true
+    },
+    handlePopoverHide () {
+      this.isPopoverShow = false
     }
   }
 }
@@ -533,6 +554,9 @@ $--scrollbar-hover-background-color: rgba($--color-text-secondary, 0.5);
       fill: $--color-text-regular;
       &.filter {
         margin-right: 5px;
+      }
+      &.is-show {
+        fill: $--theme-color;
       }
     }
     &.right-bottom {
@@ -738,6 +762,14 @@ tr {
   .column-set {
     display: flex;
     flex-direction: column;
+  }
+  &.is-show {
+    color: $--theme-color;
+  }
+}
+.yi-filter {
+  &.is-show {
+    color: $--theme-color;
   }
 }
 </style>

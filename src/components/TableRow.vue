@@ -1,23 +1,21 @@
 <template>
   <tr @click="$emit('row-click', row)" :class="[...getRowTrClasses()]">
     <cell v-for="(column, i) in visibleColumns" :key="i" :row="row" :index="index" :column="column">
-      <input
-        v-if="column.type === 'selection'"
-        type="checkbox"
-        @click.stop="onCheckboxClick"
+      <checkbox v-if="column.type === 'selection'"
+        @click="onCheckboxClick"
         :checked="row.isSelected"
-        :disabled="!row.isSelectable"
-      />
+        :disabled="!row.isSelectable"></checkbox>
     </cell>
   </tr>
 </template>
 
 <script>
 import cell from './rowCell'
-
+import Checkbox from './Checkbox.vue'
 export default {
   components: {
-    cell
+    cell,
+    Checkbox
   },
   props: {
     columns: {
