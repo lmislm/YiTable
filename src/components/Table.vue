@@ -213,7 +213,7 @@ export default {
       this.sortedRows.forEach(row => {
         // TODO：这里又实现了一遍rowCell中的方法
         const selectionCol = row.columns.find(col => col.type === 'selection')
-        const isSelectable = selectionCol.selectable && selectionCol.selectable(row.data, row.index)
+        const isSelectable = selectionCol && selectionCol.selectable && selectionCol.selectable(row.data, row.index)
         this.$set(row, 'isSelectable', isSelectable)
       })
       if (this.highlightCurrentRow) {
