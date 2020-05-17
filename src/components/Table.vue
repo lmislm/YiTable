@@ -1,13 +1,13 @@
 <template>
   <div class="yi-table">
     <div class="yi-table-set right-bottom" :class="{'outside': !inside}" v-if="showOption">
-      <span @click="isShowFilter = !isShowFilter">
+      <span @click="onShowFilter" :class="['yi-filter', { 'is-show': isShowFilter }]">
         <slot name="filter-icon">
-          <yi-table-icon icon="yi-table-filter" class="table-icon filter"></yi-table-icon>
+          <yi-table-icon icon="yi-table-filter" class-name="table-icon filter" :class="{ 'is-show': isShowFilter }"></yi-table-icon>
         </slot>
       </span>
-      <yi-popover trigger="click" :options="{ placement: 'bottom' }" append-to-body>
-        <div class="yi-popover popper">
+      <yi-popover trigger="click" :options="{ placement: 'bottom' }" append-to-body @show="handlePopoverShow" @hide="handlePopoverHide">
+        <div :class="['yi-popover popper', { 'is-show': isPopoverShow }]">
           <div class="column-set">
             <checkbox
               :key="i"
@@ -19,7 +19,7 @@
         </div>
         <span slot="reference">
           <slot name="option-icon">
-            <yi-table-icon icon="yi-table-option" class="table-icon option"></yi-table-icon>
+            <yi-table-icon icon="yi-table-option" class-name="table-icon option" :class="{ 'is-show': isPopoverShow }"></yi-table-icon>
           </slot>
         </span>
       </yi-popover>
@@ -196,7 +196,8 @@ export default {
     showColumns: [],
     hasShowColumn: false,
     columnProps: [],
-    allSelectedIndeterminate: false
+    allSelectedIndeterminate: false,
+    isPopoverShow: false
   }),
 
   computed: {
@@ -486,6 +487,16 @@ export default {
         delete newRow[prop]
         return newRow
       })
+    },
+    onShowFilter () {
+      this.isShowFilter = !this.isShowFilter
+      this.$emit('filter', this.isShowFilter)
+    },
+    handlePopoverShow () {
+      this.isPopoverShow = true
+    },
+    handlePopoverHide () {
+      this.isPopoverShow = false
     }
   }
 }
@@ -542,6 +553,9 @@ $--scrollbar-hover-background-color: rgba($--color-text-secondary, 0.5);
       fill: $--color-text-regular;
       &.filter {
         margin-right: 5px;
+      }
+      &.is-show {
+        fill: $--theme-color;
       }
     }
     &.right-bottom {
@@ -747,6 +761,14 @@ tr {
   .column-set {
     display: flex;
     flex-direction: column;
+  }
+  &.is-show {
+    color: $--theme-color;
+  }
+}
+.yi-filter {
+  &.is-show {
+    color: $--theme-color;
   }
 }
 </style>
