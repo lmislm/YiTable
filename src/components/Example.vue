@@ -143,7 +143,7 @@ export default {
         'toggleRowSelection、clearSelection',
         '-----',
         'slot: filter-icon(筛选图标slot),option-icon(列配置图标）',
-        'Events: current-change（选中的某一行）、row-click、select-all（全选）、column-props（表格中有prop的列，用于隐藏列，返回{prop,label}，这个应该封装在表格中）、selection-change（选中列变化，type是selection时候生效）',
+        'Events: current-change（选中的某一行）、row-click、select-all（全选）、column-props（表格中有prop的列，用于隐藏列，返回{prop,label}，这个应该封装在表格中）、selection-change（选中列变化，type是selection时候生效）;filter：表示是否展开筛选框)',
         '++++++++++',
         'type为index和selection时，且width为空，则默认width为55px'
       ]
