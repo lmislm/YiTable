@@ -154,8 +154,14 @@ export default {
       type: Function,
       default: () => ''
     },
-    stripe: Boolean,
-    border: Boolean,
+    stripe: {
+      type: Boolean,
+      default: true
+    },
+    border: {
+      type: Boolean,
+      default: true
+    },
     rowClassName: [String, Function],
     maxHeight: [String, Number],
     showHeader: {
