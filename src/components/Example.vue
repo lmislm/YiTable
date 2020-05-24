@@ -34,6 +34,38 @@
         </table-column>
         <!-- <column-example prop="b" /> -->
       </Table>
+      <Table
+        :showFilter="showFilte"
+        :showColumns="currentColumns"
+        highlight-current-row
+        align="left"
+        ref="yitable"
+        cacheKey="testTable2"
+        :row-class-name="rowClassName"
+        @selection-change="handleSelection"
+        :data="isOriginalData ? mockData : dataList"
+      >
+        <!-- <span slot="filter-icon">筛选slot</span>
+        <span slot="option-icon">过滤slot</span>-->
+        <div slot="name">名字搜索</div>
+        <table-column prop="index" type="index" label="序号"></table-column>
+        <table-column prop="selection" type="selection" width="55" :selectable="handleSelectable"></table-column>
+        <table-column prop="name" label="名字" width="100" :hidden="isHiddenName"></table-column>
+        <table-column prop="nickName" label="小名" sortable></table-column>
+        <table-column prop="age" label="年龄" data-type="numeric" sortable></table-column>
+        <table-column prop="birthday" label="生日" sortable></table-column>
+        <table-column
+          label="操作"
+          :filterable="false"
+          align="right"
+          cellClass="cell-test"
+        >
+          <!-- prop="operate" -->
+          <!-- <template>111</template> -->
+          <!-- <template slot-scope="scope">{{scope.row.name}}</template> -->
+        </table-column>
+        <!-- <column-example prop="b" /> -->
+      </Table>
     </div>
     <div class="item info">
       <div class="desc">
@@ -193,8 +225,8 @@ export default {
       this.$refs.yitable.toggleAllSelection()
     },
     rowClassName ({ row, index }) {
-      console.log(row, 'rowClassName')
       if (index === 2) {
+        console.log(row, 'rowClassName')
         return 'test-row'
       }
     },
