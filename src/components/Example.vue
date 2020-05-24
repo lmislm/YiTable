@@ -8,6 +8,7 @@
         highlight-current-row
         align="left"
         ref="yitable"
+        :i18n="languageI18n ? 'zh' : 'en'"
         cacheKey="testTable"
         :row-class-name="rowClassName"
         @selection-change="handleSelection"
@@ -41,10 +42,12 @@
         align="left"
         ref="yitable"
         cacheKey="testTable2"
+        :i18n="languageI18n ? 'zh' : 'en'"
         :row-class-name="rowClassName"
         @selection-change="handleSelection"
-        :data="isOriginalData ? mockData : dataList"
+        :data="[]"
       >
+        <!-- :data="isOriginalData ? mockData : dataList" -->
         <!-- <span slot="filter-icon">筛选slot</span>
         <span slot="option-icon">过滤slot</span>-->
         <div slot="name">名字搜索</div>
@@ -75,6 +78,10 @@
       <div class="selection">
         <div class="title">选中行Selection：</div>
         {{ selectionRows }}
+      </div>
+      <div class="selection">
+        <div class="title">切换语言</div>{{languageI18n}}
+        <button @click="toggleLanguage">切换第二行，第四行选中状态</button>
       </div>
       <div class="selection">
         <div class="title">切换状态</div>
@@ -143,6 +150,7 @@ export default {
       showFilte: false,
       isOriginalData: true,
       isHiddenName: false,
+      languageI18n: false,
       maxHeight: '',
       selectionRows: [],
       dataList: [],
@@ -182,6 +190,10 @@ export default {
     }
   },
   methods: {
+    toggleLanguage () {
+      console.log('toggleLanguage')
+      this.languageI18n = !this.languageI18n
+    },
     highLightRow () {
       this.$refs.yitable.setCurrentRow(this.mockData[3])
     },
