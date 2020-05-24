@@ -3,7 +3,10 @@
     <div class="yi-table-set right-bottom" :class="{'outside': !inside}" v-if="showOption">
       <span @click="onShowFilter" :class="['yi-filter', { 'is-show': isShowFilter }]">
         <slot name="filter-icon">
-          <yi-table-icon icon="yi-table-filter" class-name="table-icon filter" :class="{ 'is-show': isShowFilter }"></yi-table-icon>
+          <span class="yi-table-opt">
+            <yi-table-icon icon="yi-table-filter" class-name="table-icon filter" :class="{ 'is-show': isShowFilter }"></yi-table-icon>
+            <span class="table-icon-text">{{!isShowFilter ? i18nForm.filter : i18nForm.clear}}</span>
+          </span>
         </slot>
       </span>
       <yi-popover trigger="click" :options="{ placement: 'bottom' }" append-to-body @show="handlePopoverShow" @hide="handlePopoverHide">
@@ -19,12 +22,15 @@
         </div>
         <span slot="reference">
           <slot name="option-icon">
-            <yi-table-icon icon="yi-table-option" class-name="table-icon option" :class="{ 'is-show': isPopoverShow }"></yi-table-icon>
+            <span  class="yi-table-opt" :class="[{ 'is-show': isPopoverShow }]">
+              <yi-table-icon icon="yi-table-option" class-name="table-icon option" :class="{ 'is-show': isPopoverShow }"></yi-table-icon>
+              <span class="table-icon-text">{{i18nForm.field}}</span>
+            </span>
           </slot>
         </span>
       </yi-popover>
     </div>
-    <div class="yi-table__table-wrapper">
+    <div :class="['yi-table__table-wrapper', { 'is-table-wrapper-empty': isColumnEmpty }]">
       <table
         :class="[fullTableClass, align && `is-${align}`]"
         border="0"
@@ -76,14 +82,8 @@
       </table>
     </div>
     <slot />
-    <div
-      class="yi-table__empty yi-table__empty-text"
-      v-if="!showColumns.length && displayedRows.length && !hasShowColumn"
-    >
-      <slot name="empty-text">~</slot>
-    </div>
-    <div v-if="!displayedRows.length" class="yi-table__empty yi-table__empty-text">
-      <slot name="empty-text">~</slot>
+    <div v-if="isColumnEmpty" class="yi-table__empty yi-table__empty-text">
+      <slot name="empty-text">{{i18nForm.noData}}</slot>
     </div>
   </div>
 </template>
@@ -177,7 +177,11 @@ export default {
       type: Boolean,
       default: true
     },
-    inside: Boolean
+    inside: Boolean,
+    i18n: {
+      type: String,
+      default: 'zh'
+    }
   },
 
   data: () => ({
@@ -197,7 +201,13 @@ export default {
     hasShowColumn: false,
     columnProps: [],
     allSelectedIndeterminate: false,
-    isPopoverShow: false
+    isPopoverShow: false,
+    i18nForm: {
+      filter: '过滤',
+      clear: '清空',
+      field: '显示字段',
+      noData: '暂无数据'
+    }
   }),
 
   computed: {
@@ -255,6 +265,14 @@ export default {
     storageKey () {
       // 根据业务cacheKey来缓存cache名，TODO: 处理异常
       return this.cacheKey || ''
+    },
+    isColumnEmpty () {
+      return (
+        !this.showColumns.length &&
+        this.displayedRows.length &&
+        !this.hasShowColumn
+      ) ||
+      !this.displayedRows.length
     }
   },
   watch: {
@@ -298,11 +316,18 @@ export default {
       handler (v) {
         this.showColumns = v.filter(col => col.show).map(col => col.prop)
       }
+    },
+    i18n: {
+      immediate: true,
+      handler (v) {
+        this.locales(v)
+      }
     }
   },
   created () {
     this.sort.fieldName = this.sortBy
     this.sort.order = this.sortOrder
+    this.locales(this.i18n)
   },
   async mounted () {
     const columnComponents = this.$slots.default
@@ -421,6 +446,8 @@ export default {
       // TODO: 可以优化遍历嘛，这里内层有好几个forEach
       const rowDatas = this.displayedRows
       this.toggleAllStatus = !this.toggleAllStatus
+      if (rowDatas && rowDatas.length === 0) return
+      console.log('--------------------------')
       rowDatas.forEach(row => {
         this.setRowSelectedStatus(this.displayedRows, row.data, this.toggleAllStatus)
       })
@@ -441,6 +468,7 @@ export default {
         const rowsData = rows.map(r => r.data)
         const index = rowsData.indexOf(rowData)
         rows.forEach((row, i) => {
+          if (!row) return
           row.isHighLight = !!(i === index)
         })
       }
@@ -500,6 +528,25 @@ export default {
     },
     handlePopoverHide () {
       this.isPopoverShow = false
+    },
+    locales (lang = 'zh') {
+      const lan = lang.split('-')[0]
+      const localesMap = {
+        zh: {
+          filter: '过滤',
+          clear: '清空',
+          field: '显示字段',
+          noData: '暂无数据'
+        },
+        en: {
+          filter: 'Filter',
+          clear: 'Clear',
+          field: 'Select columns',
+          noData: 'No Data'
+        }
+      }
+      const langForm = localesMap[lan]
+      this.i18nForm = langForm
     }
   }
 }
@@ -552,8 +599,8 @@ $--scrollbar-hover-background-color: rgba($--color-text-secondary, 0.5);
   .yi-table-set {
     user-select: none;
     .table-icon {
-      width: 18px;
-      height: 18px;
+      width: 17px;
+      height: 16px;
       cursor: pointer;
       fill: $--color-text-regular;
       &.filter {
@@ -561,7 +608,15 @@ $--scrollbar-hover-background-color: rgba($--color-text-secondary, 0.5);
       }
       &.is-show {
         fill: $--theme-color;
+        color: $--theme-color;
       }
+      &.option {
+        margin-left: 20px;
+      }
+    }
+    .table-icon-text {
+      cursor: pointer;
+      margin-left: 3px;
     }
     &.right-bottom {
       position: absolute;
@@ -569,7 +624,7 @@ $--scrollbar-hover-background-color: rgba($--color-text-secondary, 0.5);
       z-index: 1;
     }
     &.outside {
-      top: -20px;
+      top: -30px;
     }
   }
   .yi-table__head {
@@ -604,6 +659,7 @@ $--scrollbar-hover-background-color: rgba($--color-text-secondary, 0.5);
   .yi-table__table-wrapper {
     height: inherit;
     overflow-y: auto;
+    // height: 43px;
     &::-webkit-scrollbar {
       position: absolute;
       right: 2px;
@@ -728,6 +784,9 @@ $--scrollbar-hover-background-color: rgba($--color-text-secondary, 0.5);
       //   }
       // }
     }
+  }
+  .is-table-wrapper-empty {
+    height: 43px;
   }
   .yi-table__empty {
     min-height: 60px;
