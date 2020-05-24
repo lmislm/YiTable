@@ -399,7 +399,9 @@ export default {
       // TODO: 优化这里的方法
       this.allSelectedIndeterminate = false
       this.isAllSelected = false
-      this.$emit('selection-change', [])
+      if (this.displayedRows && this.displayedRows.length) {
+        this.$emit('selection-change', [])
+      }
     },
     toggleRowSelection (rowData, selectStatus) {
       // selectStatus 为空时，toggleRowSelection进行反选
