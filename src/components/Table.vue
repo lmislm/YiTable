@@ -498,7 +498,7 @@ export default {
     restoreSate () {
       // 根据缓存中内容显示列表内容
       const cachedObj = expiringStorage.get(CACHE_NAME)
-      const showColumnProps = (cachedObj[this.storageKey] || [])
+      const showColumnProps = (cachedObj && cachedObj[this.storageKey] || [])
       if (showColumnProps && showColumnProps.length) {
       // 找到本表格缓存的内容
         this.columnProps.forEach(col => {
