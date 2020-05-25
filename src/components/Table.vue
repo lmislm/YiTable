@@ -597,10 +597,18 @@ $--scrollbar-hover-background-color: rgba($--color-text-secondary, 0.5);
   height: 100%;
   overflow-y: unset;
   .yi-table-set {
+    display: flex;
     user-select: none;
+    .yi-table-opt {
+      height: 25px;
+      line-height: 25px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-start;
+    }
     .table-icon {
-      width: 17px;
-      height: 16px;
+      width: 22px;
+      height: 22px;
       cursor: pointer;
       fill: $--color-text-regular;
       &.filter {
@@ -816,6 +824,7 @@ tr {
   border: $--table-border;
   padding: $--popover-padding;
   z-index: $--index-popper;
+  top: -30px!important;
   color: $--color-text-regular;
   line-height: 1.4;
   text-align: justify;
