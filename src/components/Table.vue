@@ -30,7 +30,7 @@
         </span>
       </yi-popover>
     </div>
-    <div :class="['yi-table__table-wrapper', { 'is-table-wrapper-empty': isColumnEmpty }]">
+    <div :class="['yi-table__table-wrapper', { 'is-table-wrapper-empty': isColumnEmpty }, { 'is-table-filter-show': !this.displayedRows.length && isShowFilter }]">
       <table
         :class="[fullTableClass, align && `is-${align}`]"
         border="0"
@@ -795,6 +795,9 @@ $--scrollbar-hover-background-color: rgba($--color-text-secondary, 0.5);
   }
   .is-table-wrapper-empty {
     height: 43px;
+  }
+  .is-table-filter-show {
+    height: 83px;
   }
   .yi-table__empty {
     min-height: 60px;
