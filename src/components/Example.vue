@@ -12,11 +12,11 @@
         cacheKey="testTable"
         :row-class-name="rowClassName"
         @selection-change="handleSelection"
-        :data="isOriginalData ? mockData : dataList"
+        :data="isOriginalData ? viewData : dataList"
       >
         <!-- <span slot="filter-icon">筛选slot</span>
         <span slot="option-icon">过滤slot</span>-->
-        <div slot="name">名字搜索</div>
+        <div slot="name"><input type="text" v-model="queryName"></div>
         <table-column prop="index" type="index" label="序号"></table-column>
         <table-column prop="selection" type="selection" width="55" :selectable="handleSelectable"></table-column>
         <table-column prop="name" label="名字" width="100" :hidden="isHiddenName"></table-column>
@@ -143,6 +143,7 @@ export default {
   },
   data () {
     return {
+      queryName: '',
       isShow: false,
       isChecked: false,
       isDisabled: false,
@@ -187,6 +188,15 @@ export default {
         '++++++++++',
         'type为index和selection时，且width为空，则默认width为55px'
       ]
+    }
+  },
+  computed: {
+    viewData () {
+      let subList = this.mockData
+      let l = s => s.toLowerCase() // 转换为小写的方法简化
+      let key = l(this.queryName) // 搜索词转为小写
+      subList = subList.filter(member => l(member.name).indexOf(key) > -1)
+      return subList
     }
   },
   methods: {
