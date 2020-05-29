@@ -46,6 +46,7 @@ example
 - [x] `table的border和stripe属性默认为**true**`
 - [x] `多选框样式统一成element-ui样式`
 - [ ] `scroll滚动条样式固定`
+- [ ] `过滤时，is-table-filter-show处的高度，应该优化成自动处理，而不是写死`
 
 ## <span id="git-commit">Git Commit Guidelines</span> [↑Top](#top)
 
