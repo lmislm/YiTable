@@ -797,7 +797,8 @@ $--scrollbar-hover-background-color: rgba($--color-text-secondary, 0.5);
     height: 43px;
   }
   .is-table-filter-show {
-    height: 83px;
+    // TODO: 这个地方不应该单纯的靠写死样式高度
+    height: 88px;
   }
   .yi-table__empty {
     min-height: 60px;
