@@ -45,10 +45,11 @@ example
 - [x]  `table-column`的`slot-scope="scope"`, 可以不需要给（应该是prop不需要给，不给的默认处理为空）
 - [x] `table的border和stripe属性默认为**true**`
 - [x] `多选框样式统一成element-ui样式`
-- [ ] `scroll滚动条样式固定`
-- [ ] `过滤时，is-table-filter-show处的高度，应该优化成自动处理，而不是写死`
-- [ ] `表格斑马纹颜色优先级过高，应该依赖外部`
-- [ ] `表格在模态框内，popover展示时，z-index应该要提高优先级，（注：直接给999999？）`
+- [ ] `待修复，scroll滚动条样式固定`
+- [ ] `待优化，过滤时，is-table-filter-show处的高度，应该优化成自动处理，而不是写死`
+- [ ] `待修复，表格斑马纹颜色优先级过高，应该依赖外部`
+- [ ] `待修复，表格在模态框内，popover展示时，z-index应该要提高优先级，（注：直接给999999？）`
+- [ ] `待优化，table 暂无数据上面加一个border,表格最顶加一个border，表格底部加一个border`
 
 ## <span id="git-commit">Git Commit Guidelines</span> [↑Top](#top)
 
