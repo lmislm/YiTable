@@ -47,6 +47,8 @@ example
 - [x] `多选框样式统一成element-ui样式`
 - [ ] `scroll滚动条样式固定`
 - [ ] `过滤时，is-table-filter-show处的高度，应该优化成自动处理，而不是写死`
+- [ ] `表格斑马纹颜色优先级过高，应该依赖外部`
+- [ ] `表格在模态框内，popover展示时，z-index应该要提高优先级，（注：直接给999999？）`
 
 ## <span id="git-commit">Git Commit Guidelines</span> [↑Top](#top)
 
