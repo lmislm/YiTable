@@ -25,8 +25,6 @@ example
     { name: '王五', age: '12', birthday: '1998' },
     { name: '赵六', age: '15', birthday: '1990' }
   ]"
-  stripe
-  border
 >
   <yi-table-column type="index"></yi-table-column>
   <yi-table-column type="selection" :selectable="handleSelectable"></yi-table-column>
@@ -100,6 +98,165 @@ example
 | selectable | 仅对 type=selection 的列有效，类型为 Function，Function 的返回值用来决定这一行的 CheckBox 是否可以勾选 | Function(row, index) | — | — |
 | sortable | 对应列是否可以排序 | boolean | true/false | false |
 | data-type | 指定数据按照哪个属性进行排序，如果设置为 'numeric'或者'date'则按数字大小来排序，不设置的话默认按照`localeCompare`方法来排序(排序方式，取决于`sortOrder`的值是否为`desc`来升降序) | — | — |
+
+### 举例
+
+```html
+<template>
+  <div class="example">
+    <div class="item table">
+      <Table
+        :showFilter="showFilte"
+        :showColumns="currentColumns"
+        highlight-current-row
+        align="left"
+        ref="yitable"
+        :i18n="languageI18n ? 'zh' : 'en'"
+        cacheKey="testTable"
+        :row-class-name="rowClassName"
+        @selection-change="handleSelection"
+        :data="viewData"
+      >
+        <div slot="name"><input type="text" v-model="queryName"></div>
+        <table-column prop="index" type="index" label="序号"></table-column>
+        <table-column prop="selection" type="selection" width="55" :selectable="handleSelectable"></table-column>
+        <table-column prop="name" label="名字" width="100" :hidden="isHiddenName"></table-column>
+        <table-column prop="nickName" label="小名" sortable></table-column>
+        <table-column prop="age" label="年龄" data-type="numeric" sortable></table-column>
+        <table-column prop="birthday" label="生日" sortable></table-column>
+        <table-column
+          label="操作"
+          :filterable="false"
+          align="right"
+          cellClass="cell-test"
+        >
+        </table-column>
+      </Table>
+    </div>
+  </div>
+</template>
+
+<script>
+import Table from './Table.vue'
+import TableColumn from './TableColumn.vue'
+
+export default {
+  components: {
+    Table,
+    TableColumn
+  },
+  data () {
+    return {
+      queryName: '',
+      isShow: false,
+      showFilte: false,
+      isHiddenName: false,
+      languageI18n: false,
+      selectionRows: [],
+      dataList: [],
+      mockHiddenData: ['name', 'nickName', 'age', 'birthday', 'operate'],
+      currentColumns: [],
+      mockData: [
+        { name: '张三，法外狂徒张三', nickName: '三三', age: '23', birthday: '1993' },
+        { name: '李四', nickName: '四四', age: '32', birthday: '1992' },
+        { name: '王五', nickName: '五五', age: '12', birthday: '1998' },
+        { name: '赵六', nickName: '六六', age: '15', birthday: '1990' },
+        { name: '七', nickName: '七七', age: '27', birthday: '2003' },
+        { name: '八', nickName: '八八', age: '82', birthday: '2001' },
+        { name: '九', nickName: '九九', age: '29', birthday: '2008' },
+        { name: '十', nickName: '十十', age: '10', birthday: '2010' },
+        { name: '十二', nickName: '十二十二', age: '1212', birthday: '91' },
+        { name: '十三', nickName: '十五十五', age: '-1', birthday: '2118' },
+        { name: '十四', nickName: '十', age: '-4', birthday: '2118' }
+      ]
+    }
+  },
+  computed: {
+    viewData () {
+      let subList = this.mockData
+      let l = s => s.toLowerCase() // 转换为小写的方法简化
+      let key = l(this.queryName) // 搜索词转为小写
+      subList = subList.filter(member => l(member.name).indexOf(key) > -1)
+      return subList
+    }
+  },
+  methods: {
+    toggleLanguage () {
+      console.log('toggleLanguage')
+      this.languageI18n = !this.languageI18n
+    },
+    highLightRow () {
+      this.$refs.yitable.setCurrentRow(this.mockData[3])
+    },
+    handleSelection (selection) {
+      // 有bug
+      this.selectionRows = selection
+      console.log(selection, selection.length, 'example')
+    },
+    deleteData () {
+      this.dataList = this.mockData.slice(0, 4)
+    },
+    copyData () {
+      this.dataList = this.mockData
+    },
+    deleteHiddenData () {
+      this.currentColumns = this.mockHiddenData.slice(0, 3)
+    },
+    recoveryData () {
+      this.currentColumns = this.mockHiddenData
+    },
+    switchFilter () {
+      this.showFilte = !this.showFilte
+    },
+    handleSelectable (row, index) {
+      if (index === 3) {
+        return false
+      } else {
+        return true
+      }
+    },
+    toggleSelection (rows) {
+      if (rows) {
+        rows.forEach(row => {
+          this.$refs.yitable.toggleRowSelection(row)
+        })
+      } else {
+        this.$refs.yitable.clearSelection()
+      }
+    },
+    toggleAllSelection () {
+      this.$refs.yitable.toggleAllSelection()
+    },
+    rowClassName ({ row, index }) {
+      if (index === 2) {
+        console.log(row, 'rowClassName')
+        return 'test-row'
+      }
+    },
+    switchShowColumn () {
+      this.isHiddenName = !this.isHiddenName
+    }
+  }
+}
+</script>
+<style lang="scss">
+.example {
+  display: flex;
+  flex-direction: row;
+  .item {
+    flex: 1;
+  }
+  .table {
+    flex: 1;
+    height: 400px;
+  }
+  .test-row {
+    background-color: oldlace;
+  }
+}
+</style>
+
+```
 
 
 ## TODO
