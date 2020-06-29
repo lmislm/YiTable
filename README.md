@@ -258,7 +258,6 @@ export default {
 
 ```
 
-
 ## TODO
 
 - [x] 详细文档
@@ -289,3 +288,28 @@ Must be one of the following:([detail](https://github.com/angular/angular.js/blo
 + perf: A code change that improves performance
 + test: Adding missing or correcting existing tests
 + chore: Changes to the build process or auxiliary tools and libraries such as documentation generation
+
+
+## publish
+
+> Merge branch dev in test
+
+> git checkout test
+
+> npm version <major/minor/patch>
+
+```sh
+$ npm run lib
+```
+
+```sh
+$ npm publish
+```
+
+`note: publish **.umd.min.js`
+
+## Local Development
+
+> git checkout dev
+
+> npm start
