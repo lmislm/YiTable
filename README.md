@@ -274,6 +274,9 @@ export default {
 - [ ] `待修复，表格在模态框内，popover展示时，z-index应该要提高优先级，（注：直接给999999？）`
 - [ ] `待优化，table 暂无数据上面加一个border,表格最顶加一个border，表格底部加一个border`
 
+- [ ] `打包方式修改为Rollupjs`
+- [ ] `vue3 + typeScript`
+
 ## <span id="git-commit">Git Commit Guidelines</span> [↑Top](#top)
 
 ### Type
